@@ -4,7 +4,7 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const BUCKET='photos';
 const photoUrl=p=>sb.storage.from(BUCKET).getPublicUrl(p).data.publicUrl;
 
-const rowToPage=r=>({id:r.id,l:r.layout,bg:r.bg,paths:r.photos||[],im:(r.photos||[]).map(photoUrl),t:r.caption||'',s:r.sticker||''});
+const rowToPage=r=>({id:r.id,pos:r.position,l:r.layout,bg:r.bg,paths:r.photos||[],im:(r.photos||[]).map(photoUrl),t:r.caption||'',s:r.sticker||''});
 function rowToBook(r,pages=[]){const ts=Date.parse(r.created_at);
  return{id:r.id,title:r.title,sub:r.sub||'',c:r.color,a:r.art,t:r.thickness,ts,seed:Math.floor(ts/1000)%1000,pages}}
 
@@ -26,5 +26,9 @@ async function dbAddPage(book,{l,bg,t,s},blobs){
  const paths=[];
  for(const bl of blobs){const path=`${book.id}/${crypto.randomUUID()}.jpg`;
   const{error}=await sb.storage.from(BUCKET).upload(path,bl,{contentType:'image/jpeg'});if(error)throw error;paths.push(path)}
- const{data,error}=await sb.from('pages').insert({book_id:book.id,position:book.pages.length,layout:l,bg,photos:paths,caption:t,sticker:s}).select().single();
+ const{data,error}=await sb.from('pages').insert({book_id:book.id,position:Math.max(-1,...book.pages.map(p=>p.pos))+1,layout:l,bg,photos:paths,caption:t,sticker:s}).select().single();
  if(error)throw error;return rowToPage(data)}
+
+async function dbDeletePage(page){
+ const{error}=await sb.from('pages').delete().eq('id',page.id);if(error)throw error;
+ if(page.paths&&page.paths.length)await sb.storage.from(BUCKET).remove(page.paths)}

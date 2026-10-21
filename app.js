@@ -57,7 +57,7 @@ function face(f,n){
   const fs=n===5||n===2?5.2:7;
   h=im.slice(0,n).map((u,k)=>`<div class="pol" style="--w:${S[k][2]}cqw;--x:${S[k][0]}%;--y:${S[k][1]}%;--r:${S[k][3]}deg"><i ${ph(u)}></i></div>`).join('')+
    `<div class="lab" style="left:${T[0]}%;top:${T[1]}%;width:${T[2]}%;font-size:${fs}cqw">${ln.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`}
- return `<div class="pg b-${f.bg||'white'}">${h}${f.s?`<div class="stk">${f.s}</div>`:''}<span class="pn">${n-1}</span></div>`;
+ return `<div class="pg b-${f.bg||'white'}">${h}${f.s?`<div class="stk">${f.s}</div>`:''}<span class="pn">${n-1}</span><button class="pdel" data-i="${n-2}" aria-label="Xóa trang" title="Xóa trang">🗑</button></div>`;
 }
 const single=()=>innerWidth<760;
 function buildFaces(){faces=[{endpaper:1},{title:1},...cur.pages];if(faces.length%2)faces.push({end:1})}
@@ -72,6 +72,8 @@ function openBook(id){
  <div class="bar" id="bar" style="opacity:0;pointer-events:none"><button class="btn" id="pv">‹ Trước</button><button class="btn" id="nx">Sau ›</button><button class="btn pri" id="ad">+ Thêm trang</button><button class="btn" id="dl">Xóa sách</button></div></div>`);
  paint();
  $('cv').onclick=openCover;
+ $('sp').addEventListener('click',async e=>{const b=e.target.closest('.pdel');if(!b||busy)return;const k=+b.dataset.i,pg=cur.pages[k];if(!pg||!confirm('Xóa trang này?'))return;
+  try{await dbDeletePage(pg);cur.pages.splice(k,1);buildFaces();i=Math.max(0,Math.min(i,faces.length-(single()?1:2)));paint()}catch(err){fail(err)}});
  $('pv').onclick=()=>i<=0?closeCover():flip(-1);$('nx').onclick=()=>flip(1);$('ad').onclick=addPage;
  $('dl').onclick=async()=>{if(!confirm('Xóa quyển sách này?'))return;try{await dbDeleteBook(cur);books=books.filter(b=>b!==cur);tower();hide()}catch(e){fail(e)}};
 }
@@ -116,12 +118,14 @@ function newBook(){
 function shrink(file){return new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(bl=>r(bl),'image/jpeg',.7)};im.src=fr.result};fr.readAsDataURL(file)})}
 function addPage(){
  const keep=cur;let imgs=[];
- show(`<div class="panel"><h3>Thêm trang</h3><label>Ảnh (tối đa 5)</label><input type="file" id="fi" accept="image/*" multiple style="width:100%"><div class="ph" id="ph"></div>
+ show(`<div class="panel"><h3>Thêm trang</h3><label>Ảnh (tối đa 5, bấm chọn nhiều lần để thêm dần)</label><input type="file" id="fi" accept="image/*" multiple style="width:100%"><div class="ph" id="ph"></div>
  <label>Kiểu trang</label><div class="chips t" id="ll"></div><label>Nền giấy</label><div class="chips t" id="bg"></div>
  <label>Hình dán</label><div class="chips" id="st"></div><label>Ghi chú (nên ngắn gọn)</label><textarea id="tx" placeholder="Ví dụ: Một năm của chúng mình"></textarea>
  <div class="bar"><button class="btn" id="no">Hủy</button><button class="btn pri" id="ok">Lưu trang</button></div></div>`);
  chips('ll',LAYN.map(t=>({txt:t})),()=>'');chips('bg',BGN.map(t=>({txt:t})),()=>'');chips('st',STK.map(t=>({txt:t||'∅'})),()=>'');
- $('fi').onchange=async e=>{imgs=[];for(const f of [...e.target.files].slice(0,5))imgs.push(await shrink(f));$('ph').textContent=imgs.length+' ảnh đã sẵn sàng'};
+ const draw=()=>{$('ph').innerHTML=imgs.map((b,k)=>`<span class="th"><img src="${URL.createObjectURL(b)}"><button type="button" data-k="${k}">✕</button></span>`).join('')+`<div>${imgs.length}/5 ảnh${imgs.length&&imgs.length<5?' — bấm chọn tiếp để thêm':''}</div>`;$('fi').disabled=imgs.length>=5};
+ $('fi').onchange=async e=>{for(const f of [...e.target.files].slice(0,5-imgs.length))imgs.push(await shrink(f));e.target.value='';draw()};
+ $('ph').onclick=e=>{const b=e.target.closest('button');if(!b)return;imgs.splice(+b.dataset.k,1);draw()};
  $('no').onclick=()=>openBook(keep.id);
  $('ok').onclick=async()=>{const bt=$('ok');bt.disabled=true;bt.textContent='Đang lưu...';
   try{keep.pages.push(await dbAddPage(keep,{l:LAY[$('ll').dataset.v],bg:BG[$('bg').dataset.v],t:$('tx').value.trim(),s:STK[$('st').dataset.v]},imgs))}catch(e){fail(e);bt.disabled=false;bt.textContent='Lưu trang';return}
