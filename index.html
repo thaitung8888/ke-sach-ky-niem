@@ -2,14 +2,21 @@
 <html lang="vi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kệ sách kỷ niệm</title>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Be+Vietnam+Pro:wght@400;500&family=Caveat:wght@600&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css"></head><body>
-<header><h1>Kệ sách kỷ niệm</h1><p>Mỗi chuyến đi là một quyển. Rê chuột để nhấc sách lên</p>
-<div class="modes"><button id="l1" class="on">Xếp đứng</button><button id="l2">Xếp nằm</button></div><div class="modes"><button id="m1" class="on">Theo màu</button><button id="m2">Mới nhất</button></div></header>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Be+Vietnam+Pro:wght@400;500;600&family=Caveat:wght@600&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"></head><body data-time="day">
+<header><h1>Kệ sách kỷ niệm</h1><p id="hint">Mỗi chuyến đi là một quyển.</p>
+<div class="toolbar">
+ <div class="seg" role="group" aria-label="Kiểu xếp"><button id="l1" class="on" data-ic="shelfUp">Xếp đứng</button><button id="l2" data-ic="shelfFlat">Xếp nằm</button></div>
+ <div class="seg" role="group" aria-label="Thứ tự"><button id="m1" class="on" data-ic="palette">Theo màu</button><button id="m2" data-ic="clock">Mới nhất</button></div>
+ <div class="seg" role="group" aria-label="Trang trí"><button id="l3" class="on" data-ic="sparkle">Book nook</button><button id="tm"></button></div>
+</div></header>
 <main><div class="tower" id="tower"></div></main>
-<button class="addbook" id="addbook">+ Làm quyển sách mới</button>
-<div class="ov" id="ov"><button class="x" id="close" aria-label="Đóng">✕</button><div id="slot" style="margin:auto"></div></div>
+<button class="addbook" id="addbook" data-ic="bookPlus">Làm quyển sách mới</button>
+<div class="ov" id="ov"><button class="x" id="close" aria-label="Đóng" data-ic="x"></button><div id="slot" style="margin:auto"></div></div>
+<div class="dlg" id="dlg"></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script src="db.js"></script>
+<script src="icons.js"></script>
+<script src="nooks.js"></script>
 <script src="app.js"></script></body></html>
