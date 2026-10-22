@@ -109,9 +109,9 @@ header p{margin:8px auto 16px;opacity:.7;font-size:14px;max-width:60ch}
 @keyframes cloud{to{transform:translateX(420%)}}
 
 /* ---------- sách mở và các trang ---------- */
-.ov{position:fixed;inset:0;background:rgba(30,22,16,.85);display:none;align-items:center;justify-content:center;padding:12px;z-index:5;overflow:auto}
+.ov{position:fixed;inset:0;background:rgba(30,22,16,.85);display:none;align-items:center;justify-content:center;padding:12px;z-index:20;overflow:auto}
 .ov.on{display:flex}
-.x{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));right:12px;z-index:9;background:rgba(255,255,255,.18);color:#fff;border:0;width:38px;height:38px;border-radius:50%;font-size:18px;cursor:pointer}
+.x{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));right:12px;z-index:21;background:rgba(255,255,255,.18);color:#fff;border:0;width:38px;height:38px;border-radius:50%;font-size:18px;cursor:pointer}
 .wrap{--fw:min(46vw,50vh);animation:pull .55s ease-out;text-align:center}
 .wrap.one{--fw:min(86vw,58vh)}
 @keyframes pull{from{transform:translateY(70px) scale(.55);opacity:0}}
@@ -170,7 +170,12 @@ box-shadow:1px 1px 0 #f4f1ea,2px 2px 0 #d8d3c8,3px 3px 0 #f4f1ea,4px 4px 0 #d8d3
 .btn.ghost{background:transparent;color:#efe6d6;box-shadow:inset 0 0 0 1.5px rgba(239,230,214,.5)}.btn.ghost:hover{background:rgba(217,72,59,.85);color:#fff;box-shadow:none}
 .btn.danger{background:#c0392b;color:#fff}.btn.danger:hover{background:#a93226}
 .tap{display:flex;align-items:center;justify-content:center;gap:8px;color:#efe6d6;font-size:13px;opacity:.8;margin:16px 0 -40px;transition:opacity .4s;pointer-events:none}
-.pdel{display:flex;align-items:center;justify-content:center}.pdel .ic{width:55%;height:55%}
+.pdel{all:unset;box-sizing:border-box;position:absolute;bottom:2cqw;width:8cqw;height:8cqw;min-width:26px;min-height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;color:#3b2d20;background:rgba(59,45,32,.08);opacity:.55;transition:opacity .15s,background .15s,color .15s}
+.pdel:hover,.pdel:focus-visible{opacity:1;background:#c0392b;color:#fff}
+.pdel:focus-visible{outline:2px solid #e8a33a;outline-offset:2px}
+.pdel{left:50%;translate:-50% 0}
+.pdel .ic{width:55%;height:55%;pointer-events:none}
+@media(hover:none){.pdel{opacity:.75}}
 
 /* ---------- bảng tạo sách và thêm trang ---------- */
 .panel{background:#faf6ee;color:#3b2d20;border-radius:14px;padding:20px;width:min(92vw,400px);margin:auto;box-shadow:0 30px 60px rgba(0,0,0,.4)}
