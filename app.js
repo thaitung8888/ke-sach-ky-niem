@@ -69,7 +69,7 @@ function tower(){
 function mkNook(n){const e=document.createElement('div');e.className='nook';e.innerHTML=NK.nook(n);return e}
 function upScene(t,L){
  const W=Math.min(t.clientWidth||880,880)-36,NW=126,seq=[];let rows=[[]],u=0,nn=0;
- L.forEach((b,k)=>{seq.push(b);if(nook&&(k+1)%4===2)seq.push({nk:1,t:NW})});if(nook&&L.length<2)seq.push({nk:1,t:NW});
+ L.forEach((b,k)=>{seq.push(b);if(nook&&(k+1)%7===4)seq.push({nk:1,t:NW})});if(nook&&L.length<2)seq.push({nk:1,t:NW});
  seq.forEach(b=>{if(u+b.t+1>W&&rows.at(-1).length){rows.push([]);u=0}rows.at(-1).push(b);u+=b.t+1});
  rows.forEach((r,ri)=>{while(r[0]&&r[0].nk)r.shift();if(ri<rows.length-1)while(r.length&&r.at(-1).nk)r.pop();if(!r.length)return;
   const row=document.createElement('div');row.className='row';
@@ -233,7 +233,7 @@ function addPage(){
  <p class="ph">Kéo thả ảnh vào khung hoặc bấm ô có dấu cộng. Ảnh được nén trước khi tải lên.</p>
  <label>Kiểu trang</label><div class="chips lay" id="ll"></div>
  <label>Nền giấy</label><div class="chips paper" id="bg"></div>
- <label>Hình dán</label><div class="chips stk" id="st"></div>
+ <label>Hình dán</label><div class="chips stkc" id="st"></div>
  <label for="tx">Ghi chú</label><textarea id="tx" maxlength="120" placeholder="Ví dụ: Một năm của chúng mình"></textarea></div></div>
  <div class="bar"><button class="btn" id="no">${ic('chevL')}Quay lại sách</button><button class="btn pri" id="ok">${ic('check')}Lưu trang</button></div></div>`);
  const val=()=>({l:LAY[$('ll').dataset.v],bg:BG[$('bg').dataset.v],im:urls,t:$('tx').value.trim()||'Ghi chú của bạn',s:STK[$('st').dataset.v]});

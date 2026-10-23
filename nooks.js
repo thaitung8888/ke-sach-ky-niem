@@ -144,11 +144,38 @@ const NK=(()=>{
   return {n:'Phố cổ',c:'#ffb870',vb:'0 0 118 218',clipH:218,par:'slice',bias:-34,shell:{mat:'brick',glow:'#ffb870'},
    w:['linear-gradient(90deg,#e0b160,#8a5a30)','linear-gradient(270deg,#c98a50,#7a4a28)','#1d1a2e',cobble],
    L:[[1,back],[.72,shops],[.5,mid],[.28,over],[.1,near]]}};
+
+ // Lớp thêm cho 5 nook cũ để có chiều sâu như nook Phố cổ: vật khung hai bên (gần), sương mờ xen giữa các lớp, vật phía trước.
+ const hz=(id,col,o)=>`<defs>${lg('z'+id,[[0,col,o*.25],[.5,col,o*.6],[1,col,o]])}</defs><rect width="100" height="196" fill="url(#z${id})"/>`;
+ const EXTRA=[
+ id=>[[.86,hz(id,'#3a2a55',.3)],
+  [.74,`<path d="M0 62h21v134H0z" fill="#b8843f"/><path d="M-3 64l3-15h25l-4 15z" fill="#5a2a1e"/><rect x="0" y="62" width="21" height="134" fill="#000" opacity=".16"/><path class="wn" d="M5 96V86a5 5 0 0 1 10 0v10z" fill="#ffd27a"/><path class="wn" d="M5 140v-10a5 5 0 0 1 10 0v10z" fill="#ffd27a"/><rect x="2" y="84" width="3" height="14" fill="#2f5a48"/><rect x="15" y="84" width="3" height="14" fill="#2f5a48"/>
+   <path d="M79 80h21v116H79z" fill="#a87238"/><path d="M76 82l3-13h24v13z" fill="#5a2a1e"/><rect x="79" y="80" width="21" height="116" fill="#000" opacity=".16"/><path class="wn" d="M85 112v-10a5 5 0 0 1 10 0v10z" fill="#ffd27a"/><rect x="83" y="100" width="3" height="14" fill="#2f5a48"/><rect x="95" y="100" width="3" height="14" fill="#2f5a48"/>`],
+  [.34,`<path d="M0 18Q22 34 44 20" stroke="#1a1210" stroke-width=".8" fill="none"/>${[6,18,30].map((x,k)=>`<path d="M${x} ${24+k*3}l3 8h-6z" fill="${k%2?'#f1e3c0':'#c8412f'}"/>`).join('')}`]],
+ id=>[[.86,hz(id,'#2b1c14',.32)],
+  [.74,`<rect x="0" y="34" width="19" height="128" fill="#4a2f1f"/><rect x="19" y="34" width="2" height="128" fill="#2c1a10"/>${[0,1,2,3].map(r=>{let s=`<rect x="0" y="${58+r*26}" width="21" height="3" fill="#2c1a10"/>`;let x=1;const cs=['#c2553f','#e8c15a','#3f6ea8','#7fa37a','#e8a7c0','#8b1e2b'];for(let k=0;x<18;k++){const w=2.2+((k*7+r*3)%3);s+=`<rect x="${x}" y="${58+r*26-17-(k%3)*2}" width="${w}" height="${17+(k%3)*2}" fill="${cs[(k+r)%6]}"/>`;x+=w+.4}return s}).join('')}
+   <path d="M88 0v26M96 0v20" stroke="#1a110c" stroke-width=".8"/><path d="M84 26h18l-3 14H87z" fill="#b5653f"/><g class="pl" style="transform-origin:93px 26px">${leaf(86,44,8,-20,'#2f6b45')}${leaf(94,50,10,5,'#3d8455')}${leaf(100,42,8,25,'#4f9a62')}${leaf(90,60,7,-10,'#2f6b45')}</g>`],
+  [.3,`<defs>${rgw('lp'+id,'#ffc46b')}</defs><circle class="fl" cx="8" cy="170" r="22" fill="url(#lp${id})"/><path d="M0 196v-22h20v22z" fill="#3a2418"/><rect x="0" y="172" width="22" height="4" rx="1" fill="#8a5d3a"/>`]],
+ id=>[[.86,hz(id,'#557590',.34)],
+  [.74,`<rect x="0" y="0" width="100" height="9" fill="#242a38"/><rect x="0" y="9" width="100" height="2" fill="#000" opacity=".3"/>${Array.from({length:7},(_,k)=>`<circle cx="${8+k*14}" cy="4.5" r="1.1" fill="#4a5266"/>`).join('')}
+   <rect x="0" y="0" width="9" height="196" fill="#2a2f3d"/><rect x="8" y="0" width="1.4" height="196" fill="#4a5266"/><rect x="91" y="0" width="9" height="196" fill="#2a2f3d"/><rect x="91" y="0" width="1.4" height="196" fill="#4a5266"/>
+   <path d="M9 0l12 14M91 0L79 14" stroke="#2a2f3d" stroke-width="2.5"/>`],
+  [.3,`<rect x="12" y="166" width="38" height="4" rx="1" fill="#6b4a33"/><rect x="12" y="156" width="38" height="3" rx="1" fill="#7a553a"/><path d="M15 170v22M47 170v22M15 156v10M47 156v10" stroke="#3a2a22" stroke-width="2.4"/><rect x="62" y="176" width="26" height="3" rx="1" fill="#e8c15a" opacity=".75"/>`]],
+ id=>[[.86,hz(id,'#1f6b52',.26)],
+  [.74,`<path d="M0 196V14q9 6 7 38t4 144z" fill="#0b211c"/><circle cx="2" cy="30" r="18" fill="#12392f"/><circle cx="14" cy="14" r="12" fill="#0f3028"/><circle cx="4" cy="62" r="11" fill="#12392f"/>
+   <path d="M100 196V6q-9 8-7 40t-4 150z" fill="#0b211c"/><circle cx="98" cy="22" r="19" fill="#12392f"/><circle cx="86" cy="8" r="12" fill="#0f3028"/><circle cx="96" cy="58" r="11" fill="#12392f"/>
+   <path d="M14 28q3 22 0 40M22 14q2 18-1 30M84 24q-3 24 0 44M76 10q-2 18 1 32" stroke="#1c6a4a" stroke-width="1.1" fill="none"/>`],
+  [.34,`<defs>${rgw('mz'+id,'#bfe8cf')}</defs><ellipse cx="50" cy="186" rx="46" ry="9" fill="url(#mz${id})" opacity=".5"/>`]],
+ id=>[[.86,hz(id,'#3a7286',.3)],
+  [.74,`<path d="M0 196V128q13-12 23 3t13 17l8 48z" fill="#0f2233"/><path d="M0 150q10-6 18 4" stroke="#1d3a52" stroke-width="1.4" fill="none"/><path d="M100 196V142q-10-8-19 6t-12 14l-7 34z" fill="#0f2233"/><path d="M100 160q-8-5-14 3" stroke="#1d3a52" stroke-width="1.4" fill="none"/>`],
+  [.4,`<ellipse cx="26" cy="26" rx="28" ry="5" fill="#9db6c8" opacity=".13"/><ellipse cx="78" cy="48" rx="24" ry="4" fill="#9db6c8" opacity=".1"/>`],
+  [.3,`<g class="bob"><path d="M8 162q5-6 10 0M18 158q4-5 8 0" stroke="#e9eef5" stroke-width="1.2" fill="none" stroke-linecap="round"/></g>`]]
+ ];
  SC.unshift(BRICK);
  // 5 nook cũ dùng chung kiểu vỏ + công tắc, mỗi nook một chất liệu hợp cảnh.
  const W0={l0:20,r0:98,lim:[14,28,90,104]};
  const SHELLS={1:{...W0,mat:'plaster',glow:'#ffb35a',seed:5},2:{...W0,mat:'wood',glow:'#ffc46b',seed:8},3:{...W0,mat:'stone',glow:'#ffd98a',seed:13},4:{...W0,mat:'stone',moss:1,glow:'#d8ff8a',seed:17},5:{...W0,mat:'board',glow:'#ffe9a0',seed:21}};
- SC.forEach((f,k)=>{if(k)SC[k]=id=>Object.assign(f(id),{shell:SHELLS[k],clipH:196,par:'meet',bias:-24})});
+ SC.forEach((f,k)=>{if(k)SC[k]=id=>{const s=f(id);s.L=s.L.concat(EXTRA[k-1](id));return Object.assign(s,{shell:SHELLS[k],clipH:196,par:'meet',bias:-24})}});
 
  function nook(k){const id='n'+(++u),s=SC[k%SC.length](id),d=70,vb=s.vb||'0 0 100 196',par=s.par==='meet'?'xMidYMid meet':'xMidYMid slice';
   const box=`<div class="nk-box" style="--d:${d}px"><i class="w wl" style="background:${s.w[0]}"></i><i class="w wr" style="background:${s.w[1]}"></i><i class="w wt" style="background:${s.w[2]}"></i><i class="w wb" style="background:${s.w[3]}"></i>
