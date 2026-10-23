@@ -282,3 +282,47 @@ box-shadow:1px 1px 0 #f4f1ea,2px 2px 0 #d8d3c8,3px 3px 0 #f4f1ea,4px 4px 0 #d8d3
 .nook.off rect.fl{fill:#3b2d24;animation:none}
 .nook.off circle.fl,.nook.off ellipse.fl{opacity:0;animation:none}
 .slot.out.lift{translate:calc(var(--dir,1)*52%) -30px;scale:1.12;opacity:0;transition:translate .42s ease-in,scale .42s ease-in,opacity .3s .1s}
+
+/* ---------- kéo lật trang ---------- */
+.bookbox.opened .spread{touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab}
+.spread.drag{cursor:grabbing}
+.leaf>.fr::after,.leaf>.bk::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:5}
+.leaf.r>.fr::after{background:linear-gradient(90deg,rgba(0,0,0,calc(var(--p,0)*.28)),transparent 55%)}
+.leaf.l>.fr::after{background:linear-gradient(270deg,rgba(0,0,0,calc(var(--p,0)*.28)),transparent 55%)}
+.leaf.r>.bk::after{background:linear-gradient(270deg,rgba(0,0,0,calc((1 - var(--p,0))*.3)),transparent 55%)}
+.leaf.l>.bk::after{background:linear-gradient(90deg,rgba(0,0,0,calc((1 - var(--p,0))*.3)),transparent 55%)}
+/* ---------- ảnh rơi xuống rồi dán băng keo ---------- */
+.pol::before,.hero::before{content:"";position:absolute;left:50%;top:-2.4cqw;width:34%;height:5.2cqw;translate:-50% 0;rotate:-4deg;background:rgba(238,214,150,.7);box-shadow:0 .2cqw .5cqw rgba(0,0,0,.1);clip-path:polygon(3% 0,97% 5%,100% 50%,97% 100%,2% 95%,0 50%);z-index:1}
+.hero::before{top:-4.6cqw;width:24%}
+.face.pre .pol,.face.pre .hero,.face.pre .stk{opacity:0}
+.face.drop .pol,.face.drop .hero{animation:drop .62s cubic-bezier(.2,.85,.3,1.12) both;animation-delay:calc(var(--k,0)*110ms + 60ms)}
+.face.drop .pol::before,.face.drop .hero::before{animation:tape .28s ease-out both;animation-delay:calc(var(--k,0)*110ms + 560ms)}
+.face.drop .stk{animation:stick .4s cubic-bezier(.3,1.5,.5,1) both;animation-delay:.5s}
+@keyframes drop{from{opacity:0;translate:0 -16cqw;scale:1.2;rotate:10deg;box-shadow:0 7cqw 9cqw rgba(0,0,0,.2)}55%{opacity:1}}
+@keyframes tape{from{opacity:0;scale:1.5}}
+@keyframes stick{from{opacity:0;scale:1.8}}
+/* ---------- bụi trên sách lâu không mở ---------- */
+.tower .spine.dusty{filter:brightness(calc(1 - var(--lamp,0)*.22)) saturate(calc(1 - var(--dust)*.45))}
+.spine .dust{position:absolute;inset:0;pointer-events:none;z-index:3;opacity:calc(.2 + var(--dust)*.55);
+ background:linear-gradient(180deg,rgba(236,229,214,.95),rgba(226,219,205,.55) 5px,transparent 20px),
+ url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .93 0 0 0 0 .91 0 0 0 0 .87 3.2 0 0 0 -2.05'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)'/%3E%3C/svg%3E")}
+.tower.flat .spine .dust{background:linear-gradient(180deg,rgba(236,229,214,.9),transparent 9px),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .93 0 0 0 0 .91 0 0 0 0 .87 3.2 0 0 0 -2.05'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)'/%3E%3C/svg%3E")}
+.spine.puff .dust{animation:puff .8s ease-out forwards}
+@keyframes puff{to{opacity:0;translate:0 -16px;scale:1.15;filter:blur(4px)}}
+
+.seg button{white-space:nowrap}
+@media (max-width:520px){.seg button{padding:7px 10px}#snd span{display:none}}
+
+/* ---------- tờ giấy cong khi lật ---------- */
+.leaf.curl{transition:none;width:var(--fw)}
+.leaf.curl .st{position:absolute;inset:auto;top:0;height:100%;transform-style:preserve-3d;backface-visibility:visible}
+.leaf.curl .sf,.leaf.curl .sb{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff}
+.leaf.curl .sb{transform:rotateY(180deg)}
+.leaf.curl .face{position:absolute;top:0;height:100%}
+.leaf.curl .shd{position:absolute;inset:0;pointer-events:none;z-index:6}
+.leaf.curl .pdel{display:none}
+.cast{position:absolute;top:0;bottom:0;width:var(--fw);pointer-events:none;z-index:3;opacity:0}
+.cast.rt{left:var(--fw);background:linear-gradient(90deg,rgba(30,20,10,.55),rgba(30,20,10,.15) 35%,transparent 75%)}
+.cast.lt{left:0;background:linear-gradient(270deg,rgba(30,20,10,.55),rgba(30,20,10,.15) 35%,transparent 75%)}
+.one .cast{left:0}
+.one .bookbox{perspective:1100px}

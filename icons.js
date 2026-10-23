@@ -1,5 +1,7 @@
 // Bộ icon nét mảnh dùng chung cho toàn trang. Gọi ic('ten') để lấy thẻ <svg>.
 const ICONS={
+ vol:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>',
+ volX:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>',
  shelfUp:'<path d="M3 20h18"/><rect x="5" y="6" width="3.2" height="14" rx=".6"/><rect x="9.2" y="4" width="3.2" height="16" rx=".6"/><path d="M14.4 19.6l3-12.6 3.1.8-3 12.6"/>',
  shelfFlat:'<path d="M3 20.5h18"/><rect x="5" y="15.5" width="14" height="4" rx=".8"/><rect x="4" y="11" width="13" height="4" rx=".8"/><rect x="6.5" y="6.5" width="12" height="4" rx=".8"/>',
  palette:'<path d="M12 3a9 9 0 1 0 0 18c1.3 0 1.8-.9 1.4-1.8-.5-1.1.3-2.4 1.6-2.4H17a4 4 0 0 0 4-4C21 7.2 17 3 12 3z"/><circle cx="7.5" cy="11" r="1.1"/><circle cx="10.5" cy="7.2" r="1.1"/><circle cx="15" cy="7.5" r="1.1"/>',
