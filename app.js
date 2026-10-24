@@ -24,7 +24,7 @@ function art(k,c){const d=shade(c,-.28),m=shade(c,-.13),l=shade(c,.4),g='#7d8f4a
  `<circle cx="44" cy="44" r="22" fill="${s}"/><rect x="108" y="150" width="12" height="40" fill="${d}"/><path d="M114 24l38 50h-76z" fill="${d}"/><path d="M114 58l48 58H66z" fill="${m}"/><path d="M114 94l58 64H56z" fill="${d}"/><rect x="38" y="150" width="8" height="40" fill="${d}"/><path d="M42 96l26 36H16z" fill="${m}"/><path d="M42 118l32 38H10z" fill="${d}"/><path d="M0 190q50-14 100-4t100-8v22H0z" fill="${l}"/>`];
  return `<svg viewBox="0 0 200 200">${A[k]}</svg>`}
 
-let nook=true,layout='up',books=[],mode='color',cur=null,i=0,busy=0,faces=[],timePref='auto',pulled=null;
+let look='near',morphing=0,nook=true,layout='up',books=[],mode='color',cur=null,i=0,busy=0,faces=[],timePref='auto',pulled=null;
 const hs=s=>{let h=7;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return h};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
@@ -113,16 +113,78 @@ function mkSpine(b){const e=document.createElement('button'),lt=lum(b.c)>.62,h=b
  e.innerHTML=`<span class="tt">${esc(b.title)}</span><small>${esc(b.sub||'')}</small>`;
  e.title=`${b.title} · ${stats(b)}`;e.setAttribute('aria-label',`Mở sách ${b.title}, ${stats(b)}`);
  const du=dustOf(b);if(du>.02){e.classList.add('dusty');e.style.setProperty('--dust',du.toFixed(2));e.insertAdjacentHTML('beforeend','<i class="dust" aria-hidden="true"></i>')}
- e.onclick=()=>pull(e,b.id);return e}
+ e.dataset.id=b.id;e.onclick=()=>pull(e,b.id);return e}
 
 function tower(){
  pulled=null;
  const L=[...books].sort((a,b)=>mode==='color'?hue(a.c)-hue(b.c):b.ts-a.ts),t=$('tower');t.innerHTML='';
- t.className='tower '+(layout==='flat'?'flat':'up');
+ t.className='tower '+(layout==='flat'?'flat':'up');t.hidden=look==='far';$('far').hidden=look!=='far';
  $('hint').textContent=layout==='flat'?'Chạm một quyển để rút nó ra khỏi chồng sách':'Chạm một quyển để rút ra đọc. Rê chuột qua hộp nook để nhìn sâu vào trong, bấm công tắc để tắt đèn';
  if(!books.length){t.innerHTML=`<div class="empty">${ic('bookOpen')}<p>Kệ còn trống. Bấm “Làm quyển sách mới” để xếp quyển đầu tiên.</p></div>`;return}
- layout==='flat'?flatScene(t,L):upScene(t,L);req();
+ layout==='flat'?flatScene(t,L):upScene(t,L);
+ if(look==='far'){renderFar(L);$('hint').textContent=farHint()}req();
 }
+
+// ---------- Góc nhìn xa: cả tủ sách thu nhỏ vừa màn hình ----------
+const RH=294,CASEP=[16,16,16,16];// chiều cao một tầng (kệ + ván + khoảng hở), đệm của tủ: trên, phải, dưới, trái
+function renderFar(L){const f=$('far');f.innerHTML='';
+ if(!L)L=[...books].sort((a,b)=>mode==='color'?hue(a.c)-hue(b.c):b.ts-a.ts);f.hidden=false;
+ if(layout==='flat')return renderFarFlat(L,f);
+ const NW=126,seq=[];L.forEach((b,k)=>{seq.push(b);if(nook&&(k+1)%7===4)seq.push({nk:1,t:NW})});
+ const tot=seq.reduce((s,b)=>s+b.t+1,0),big=Math.max(...seq.map(b=>b.t)),aw=Math.min(innerWidth-24,1500),ah=Math.max(240,innerHeight-document.querySelector('header').offsetHeight-48);
+ // thử số tầng để tủ có tỉ lệ gần với màn hình nhất (tủ to nhất mà vẫn vừa)
+ let best=null;for(let r=1;r<=Math.max(1,Math.ceil(tot/300));r++){const w=Math.max(tot/r*1.06+big,560)+CASEP[1]+CASEP[3]+36,h=r*RH+CASEP[0]+CASEP[2]-2,s=Math.min(aw/w,ah/h,.72);if(!best||s>best.s)best={r,w,s}}
+ const W=best.w-CASEP[1]-CASEP[3]-36;let rows=[[]],u=0,nn=0;
+ seq.forEach(b=>{if(u+b.t+1>W&&rows.at(-1).length){rows.push([]);u=0}rows.at(-1).push(b);u+=b.t+1});
+ const cs=document.createElement('div');cs.className='case';cs.style.width=best.w+'px';const bk=document.createElement('div');bk.className='cback';cs.append(bk);
+ rows.forEach(r=>{while(r.length&&r.at(-1).nk)r.pop();while(r[0]&&r[0].nk)r.shift();if(!r.length)return;const row=document.createElement('div');row.className='row';
+  r.forEach(b=>{if(b.nk)row.append(mkNook(nn++));else{const e=mkSpine(b);e.onclick=()=>setView('near',b.id);e.setAttribute('aria-label',`Phóng tới sách ${b.title}`);row.append(e)}});
+  bk.append(row);const bd=document.createElement('div');bd.className='board';bk.append(bd)});
+ f.append(cs);const nr=bk.querySelectorAll('.row').length,H=CASEP[0]+CASEP[2]+22+nr*RH-26,s=Math.max(.2,Math.min(aw/best.w,(ah-30)/H,.72));
+ cs.style.transform=`scale(${s})`;f.style.width=best.w*s+'px';f.style.height=H*s+'px'}
+
+// Xếp nằm nhìn xa: chia thành các chồng tối đa 50 quyển, đứng cạnh nhau trên một chiếc ghế dài.
+const PILE=50,farHint=()=>layout==='flat'?'Toàn cảnh các chồng sách, mỗi chồng tối đa 50 quyển. Bấm một quyển để phóng tới chỗ nó':'Toàn cảnh tủ sách. Bấm một quyển để phóng tới chỗ nó';
+function renderFarFlat(L,f){const aw=Math.min(innerWidth-24,1500),ah=Math.max(240,innerHeight-document.querySelector('header').offsetHeight-48);
+ const sc=document.createElement('div');sc.className='tower flat fflat';const ps=document.createElement('div');ps.className='piles';
+ for(let k=0;k<L.length;k+=PILE){const pile=document.createElement('div');pile.className='pile';const st=document.createElement('div');st.className='stack';
+  [...L.slice(k,k+PILE)].reverse().forEach(b=>{const s=document.createElement('div');s.className='slot';s.style.setProperty('--o',(hs(b.id+b.title)%20)-4+'px');
+   const e=mkSpine(b);e.onclick=()=>setView('near',b.id);e.setAttribute('aria-label',`Phóng tới sách ${b.title}`);s.append(e);st.append(s)});
+  const n=document.createElement('span');n.className='pnum';n.textContent=`${k+1}–${Math.min(L.length,k+PILE)}`;pile.append(st,n);ps.append(pile)}
+ const bn=document.createElement('div');bn.className='bench';sc.append(ps,bn);f.append(sc);
+ const W=sc.offsetWidth,H=sc.offsetHeight,s=Math.max(.12,Math.min(aw/W,(ah-10)/H,.6));
+ sc.style.transform=`scale(${s})`;f.style.width=W*s+'px';f.style.height=H*s+'px'}
+// Chuyển giữa gần và xa: cảnh cũ phóng/thu về phía một quyển sách, cảnh mới hiện ra từ đúng chỗ quyển đó.
+function centerSpine(box){let best=null,d=1e9;const cx=innerWidth/2,cy=innerHeight/2;
+ box.querySelectorAll('.spine').forEach(e=>{const r=e.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;const q=Math.hypot(r.left+r.width/2-cx,r.top+r.height/2-cy);if(q<d){d=q;best=e}});return best}
+function setView(v,id){if(morphing||(v===look&&!id))return;const from=look;if(!books.length)v='near';look=v;store.set('ksk3view',v);drawView();
+ const out=from==='far'?$('far'):$('tower'),inc=v==='far'?$('far'):$('tower');
+ // đo quyển mốc ở cảnh cũ trước khi dựng cảnh mới
+ const a=from===v?null:id?out.querySelector(`.spine[data-id="${CSS.escape(id)}"]`):centerSpine(out),bid=a&&a.dataset.id,skip=RM()||!a||out.hidden;
+ const ra=a&&a.getBoundingClientRect(),ro=out.getBoundingClientRect();
+ if(v==='far'){renderFar();$('hint').textContent=farHint()}else tower();
+ if(from===v){inc.hidden=false;return found(inc,id)}
+ SFX.play(v==='far'?'slide':'pull');
+ if(skip){out.hidden=true;inc.hidden=false;if(v==='far')scrollTo({top:0,behavior:'instant'});return found(inc,bid)}
+ morphing=1;
+ out.hidden=false;out.style.cssText+=`;position:fixed;left:${ro.left}px;top:${ro.top}px;width:${ro.width}px;height:${ro.height}px;margin:0;z-index:7;pointer-events:none`;
+ inc.hidden=false;const b=inc.querySelector(`.spine[data-id="${CSS.escape(bid)}"]`);
+ if(v==='near'&&b){const r=b.getBoundingClientRect();scrollTo({top:Math.max(0,scrollY+r.top+r.height/2-innerHeight*.55),behavior:'instant'})}else scrollTo({top:0,behavior:'instant'});
+ const fin=()=>{out.hidden=true;out.style.position=out.style.left=out.style.top=out.style.margin=out.style.zIndex=out.style.pointerEvents='';if(out.id==='tower')out.style.width=out.style.height='';
+  inc.style.transformOrigin='';morphing=0;req();found(inc,bid)};
+ if(!b){fin();return}
+ const rb=b.getBoundingClientRect(),ri=inc.getBoundingClientRect(),k=Math.sqrt(ra.width*ra.height/(rb.width*rb.height)),D=760,E='cubic-bezier(.6,0,.2,1)';
+ inc.style.transformOrigin=`${rb.left-ri.left}px ${rb.top-ri.top}px`;out.style.transformOrigin=`${ra.left-ro.left}px ${ra.top-ro.top}px`;
+ inc.animate({transform:[`translate(${ra.left-rb.left}px,${ra.top-rb.top}px) scale(${k})`,'none']},{duration:D,easing:E});
+ inc.animate({opacity:[0,1]},{duration:D*.5,easing:'ease-out'});
+ out.animate({transform:['none',`translate(${rb.left-ra.left}px,${rb.top-ra.top}px) scale(${1/k})`]},{duration:D,easing:E});
+ out.animate({opacity:[1,1,0]},{duration:D,easing:'linear'}).onfinish=fin}
+function found(box,id){if(!id||look!=='near')return;const e=box.querySelector(`.spine[data-id="${CSS.escape(id)}"]`);if(!e)return;e.classList.remove('found');void e.offsetWidth;e.classList.add('found');setTimeout(()=>e.classList.remove('found'),2000)}
+function drawView(){$('v1').classList.toggle('on',look==='near');$('v2').classList.toggle('on',look==='far');$('v1').setAttribute('aria-pressed',look==='near');$('v2').setAttribute('aria-pressed',look==='far')}
+{const g=document.createElement('div');g.className='seg';g.setAttribute('role','group');g.setAttribute('aria-label','Góc nhìn');
+ g.innerHTML=`<button id="v1" type="button">${ic('zoomIn')}<span>Nhìn gần</span></button><button id="v2" type="button">${ic('bookcase')}<span>Nhìn xa</span></button>`;
+ document.querySelector('.toolbar').prepend(g);$('v1').onclick=()=>setView('near');$('v2').onclick=()=>setView('far');
+ const f=document.createElement('div');f.id='far';f.className='farwrap';f.hidden=true;$('tower').after(f)}
 
 // Xếp đứng: kệ ván phẳng như bản đầu, nook xen giữa sách.
 function mkNook(n){const e=document.createElement('div');e.className='nook';e.innerHTML=NK.nook(n);return e}
@@ -369,6 +431,6 @@ const canLock=()=>!!(screen.orientation&&screen.orientation.lock&&document.docum
 
 // ---------- khởi động ----------
 document.querySelectorAll('[data-ic]').forEach(b=>b.insertAdjacentHTML('afterbegin',ic(b.dataset.ic)));
-layout=store.get('ksk3layout')||'up';nook=store.get('ksk3nook')!=='0';timePref=store.get('ksk3time')||'auto';if(!TIMES.includes(timePref))timePref='auto';
+look=store.get('ksk3view')==='far'?'far':'near';drawView();layout=store.get('ksk3layout')||'up';nook=store.get('ksk3nook')!=='0';timePref=store.get('ksk3time')||'auto';if(!TIMES.includes(timePref))timePref='auto';
 $('l3').classList.toggle('on',nook);$('l3').setAttribute('aria-pressed',nook);applyTime();
 (async()=>{$('tower').innerHTML='<p class="empty">Đang tải kệ sách...</p>';try{books=await dbLoadBooks()}catch(e){fail(e)}setLayout(layout)})();

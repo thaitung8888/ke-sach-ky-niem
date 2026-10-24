@@ -1,5 +1,7 @@
 // Bộ icon nét mảnh dùng chung cho toàn trang. Gọi ic('ten') để lấy thẻ <svg>.
 const ICONS={
+ zoomIn:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20.5 20.5M10.5 7.5v6M7.5 10.5h6"/>',
+ bookcase:'<rect x="4" y="3" width="16" height="18" rx="1.2"/><path d="M4 9h16M4 15h16M7 9V5.5M9 9V6M12.5 15v-3.5M15 15v-4M8 21v-3.5M10 21v-3"/>',
  rotate:'<rect x="3" y="8" width="18" height="10" rx="2"/><path d="M7 3.5a6.5 6.5 0 0 1 9 1.2"/><path d="M16.6 2.2l-.4 2.7-2.7-.4"/>',
  ticket:'<path d="M3.5 6.5h17v3.5a2 2 0 0 0 0 4v3.5h-17V14a2 2 0 0 0 0-4z"/><path d="M15 7v10" stroke-dasharray="1.4 2"/>',
  crop:'<path d="M6.5 2.5v13a2 2 0 0 0 2 2h13"/><path d="M17.5 21.5v-13a2 2 0 0 0-2-2h-13"/>',
