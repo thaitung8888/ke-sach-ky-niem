@@ -1,0 +1,30 @@
+{
+ "name": "Kệ sách kỷ niệm",
+ "short_name": "Kệ sách",
+ "description": "Mỗi chuyến đi là một quyển sách trên kệ.",
+ "start_url": "./",
+ "scope": "./",
+ "display": "fullscreen",
+ "orientation": "landscape",
+ "background_color": "#efe6d6",
+ "theme_color": "#efe6d6",
+ "lang": "vi",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}

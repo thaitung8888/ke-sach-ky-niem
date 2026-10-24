@@ -2,7 +2,7 @@ const $=id=>document.getElementById(id);
 const COL=['#8b1e2b','#c97b63','#e07a5f','#f4b6a6','#e9965a','#f2d08a','#e8c15a','#a3a35a','#a9bf8f','#7fa37a','#2f6f5e','#3f8f8b','#9fd3c7','#8cc1d9','#3f6ea8','#2c4a7c','#7a6fb0','#b9aee0','#e8a7c0','#f4c2d7','#b08968','#efe6d6','#8a8f98','#3d3a36'];
 const ARTN=['Vòm cổng','Hoa','Sóng','Núi','Cọ','Chùa','Thuyền','Hoa sen','Đèn lồng','Nón lá','Máy bay','Cây thông'];
 const BG=['white','cream','grid','kraft','mint','rose'],BGN=['Trắng','Kem','Ô vuông','Kraft','Mint','Hồng'];
-const LAY=['scatter','hero','quote'],LAYN=['Ảnh rải','Ảnh lớn','Chỉ chữ'];
+const LAY=['scatter','hero','quote','ticket'],LAYN=['Ảnh rải','Ảnh lớn','Chỉ chữ','Vé lưu niệm'];
 const STK=['','🌿','☀️','🌊','⛰️','🍜','📷','❤️','⭐','🎒'];
 const MARKC=['#d9483b','#e8c15a','#3f6ea8','#2f6f5e','#e8a7c0'];
 const rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
@@ -60,7 +60,7 @@ const SFX=(()=>{let ctx=null,on=store.get('ksk3snd')!=='0';
   pull:()=>swish(.4,450,1100,.12,.9),slide:()=>swish(.28,1100,500,.08,.9),
   open:()=>{thump(110,.3,.18);swish(.45,600,1900,.11,.7)},close:()=>{swish(.28,1800,600,.09,.7);setTimeout(()=>thump(95,.35,.16),230)},
   click:()=>{const c=ac();if(!c)return;const t=c.currentTime,o=c.createOscillator(),g=c.createGain();o.type='square';o.frequency.value=1700;env(g,t,.002,.05,.03);o.connect(g).connect(c.destination);o.start(t);o.stop(t+.04);setTimeout(()=>thump(170,.14,.05),35)},
-  puff:()=>swish(.7,280,900,.13,.5)};
+  puff:()=>swish(.7,280,900,.13,.5),tick:()=>swish(.2,1400,2800,.1,.9)};
  return{play:n=>{if(on&&P[n])try{P[n]()}catch(e){}},get on(){return on},set on(v){on=v;store.set('ksk3snd',v?'1':'0')}}})();
 const sndBtn=document.createElement('button');sndBtn.id='snd';sndBtn.type='button';$('tm').after(sndBtn);
 const drawSnd=()=>{sndBtn.innerHTML=ic(SFX.on?'vol':'volX')+'<span>Âm thanh</span>';sndBtn.classList.toggle('on',SFX.on);sndBtn.setAttribute('aria-pressed',String(SFX.on));sndBtn.title=SFX.on?'Tắt âm thanh':'Bật âm thanh';sndBtn.setAttribute('aria-label',sndBtn.title)};
@@ -71,6 +71,38 @@ const SEEN=(()=>{try{return JSON.parse(store.get('ksk3seen')||'{}')||{}}catch(e)
 const dustOf=b=>{const t=SEEN[b.id]||b.ts||Date.now(),days=(Date.now()-t)/864e5;return Math.max(0,Math.min(1,(days-14)/150))};
 function markSeen(id){SEEN[id]=Date.now();store.set('ksk3seen',JSON.stringify(SEEN))}
 function dustOff(el){if(!el||!el.classList.contains('dusty'))return;SFX.play('puff');el.classList.add('puff');setTimeout(()=>{el.classList.remove('dusty','puff');el.querySelector('.dust')?.remove()},800)}
+
+// ---------- Vé lưu niệm: ảnh vé thành mẩu giấy, bấm để lật xem ghi chú mặt sau ----------
+// Vị trí cho 1, 2, 3 vé: [trái %, trên %, rộng tối đa cqw, góc xoay, cao tối đa cqw]
+const TKP=[[[12,13,80,-3,92]],[[4,6,66,-4,60],[30,46,64,3,58]],[[3,3,58,-5,44],[38,25,58,4,44],[8,54,58,-2,42]]];
+const torn=s=>{let v=s*7919+13;const r=()=>(v=(v*9301+49297)%233280)/233280,P=[];
+ for(let x=0;x<=100;x+=5)P.push(`${x}% ${(r()*2.4).toFixed(1)}%`);for(let y=5;y<=95;y+=6)P.push(`${(100-r()*2.4).toFixed(1)}% ${y}%`);
+ for(let x=100;x>=0;x-=5)P.push(`${x}% ${(100-r()*2.8).toFixed(1)}%`);for(let y=95;y>=5;y-=6)P.push(`${(r()*2.4).toFixed(1)}% ${y}%`);return `polygon(${P.join(',')})`};
+function tickets(f){const im=(f.im||[]).slice(0,3),n=im.length,P=TKP[n-1],tk=(f.x&&f.x.tk)||[],sub=esc((cur&&cur.sub)||'');
+ return im.map((u,k)=>{const d=tk[k]||{},r=Math.max(.25,Math.min(4,+d.r||1.5)),[x0,y,W,rot,H]=P[k],w=Math.min(W,H*r),x=n===1?(100-w)/2:Math.min(x0,98-w);
+  // vé dài như hóa đơn: mép răng cưa; vé ngang: có lỗ bấm và đường xé; còn lại: mép giấy xé
+  const kind=r<.7?'receipt':r>1.25?'stub':'torn',len=Math.max(8,(d.n||'Chưa có ghi chú').length+6),fs=Math.max(2.4,Math.min(4.8,Math.sqrt(w*(w/r)*.42/(len*.55)))),cp=kind==='torn'?'clip-path:'+torn(k*7+n+(d.n||'').length):'',clip=cp?` style="${cp}"`:'';
+  return `<div class="tk tk-${kind}" role="button" tabindex="0" aria-label="Vé ${k+1}: bấm để lật xem mặt sau" style="--k:${k};--r:${rot}deg;left:${x.toFixed(1)}%;top:${y}%;width:${w.toFixed(1)}cqw;aspect-ratio:${r.toFixed(3)}"><div class="tki">
+   <div class="tkf"><div class="tkm"${clip}><i style="background-image:url('${u}')"></i></div></div>
+   <div class="tkb"><div class="tkm" style="--fs:${fs.toFixed(2)}cqw;${cp}"><p>${d.n?esc(d.n):'<em>Chưa có ghi chú</em>'}</p>${sub?`<span class="tks">${sub}</span>`:''}</div></div></div></div>`}).join('')+(f.t?`<div class="cap">${esc(f.t)}</div>`:'')}
+document.addEventListener('click',e=>{const t=e.target.closest('.tk');if(!t||t.closest('.leaf'))return;t.classList.toggle('flip');SFX.play('tick')});
+document.addEventListener('keydown',e=>{const t=e.target.closest&&e.target.closest('.tk');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();e.stopPropagation();t.click()}},true);
+// Cắt ảnh vé: kéo 4 góc hoặc kéo cả khung, trả về {blob,url,r} hoặc null nếu hủy.
+function cropImg(src){return new Promise(done=>{const ov=document.createElement('div');ov.className='crop';
+ ov.innerHTML=`<div class="cbox" role="dialog" aria-modal="true" aria-label="Cắt ảnh vé"><p class="ch">${ic('crop')}Kéo các góc để cắt sát mép vé</p><div class="cimg"><div class="cwrap"><img src="${src}" alt="Ảnh vé" draggable="false"><div class="crect"><i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i></div></div></div><div class="bar"><button class="btn" type="button" data-a="no">Hủy</button><button class="btn pri" type="button" data-a="ok">${ic('check')}Cắt</button></div></div>`;
+ document.body.append(ov);const img=ov.querySelector('img'),rc=ov.querySelector('.crect'),Q={x:.04,y:.04,w:.92,h:.92};let dr=null;
+ const put=()=>{rc.style.cssText=`left:${Q.x*100}%;top:${Q.y*100}%;width:${Q.w*100}%;height:${Q.h*100}%`};put();
+ rc.addEventListener('pointerdown',e=>{e.preventDefault();dr={h:e.target.dataset.h||'m',x:e.clientX,y:e.clientY,b:img.getBoundingClientRect(),q:{...Q}};try{rc.setPointerCapture(e.pointerId)}catch(_){}});
+ rc.addEventListener('pointermove',e=>{if(!dr)return;const{b,q,h}=dr,dx=(e.clientX-dr.x)/b.width,dy=(e.clientY-dr.y)/b.height,m=.1,cl=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+  if(h==='m'){Q.x=cl(q.x+dx,0,1-q.w);Q.y=cl(q.y+dy,0,1-q.h)}
+  else{let x0=q.x,y0=q.y,x1=q.x+q.w,y1=q.y+q.h;if(h.includes('w'))x0=cl(x0+dx,0,x1-m);if(h.includes('e'))x1=cl(x1+dx,x0+m,1);if(h.includes('n'))y0=cl(y0+dy,0,y1-m);if(h.includes('s'))y1=cl(y1+dy,y0+m,1);Object.assign(Q,{x:x0,y:y0,w:x1-x0,h:y1-y0})}put()});
+ const end=()=>{dr=null};rc.addEventListener('pointerup',end);rc.addEventListener('pointercancel',end);
+ const close=v=>{ov.remove();removeEventListener('keydown',esc0,true);done(v)},esc0=e=>{if(e.key==='Escape'){e.stopPropagation();close(null)}};addEventListener('keydown',esc0,true);
+ ov.addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(!a)return;if(a.dataset.a==='no')return close(null);
+  const W=img.naturalWidth,H=img.naturalHeight,c=document.createElement('canvas');c.width=Math.max(1,Math.round(Q.w*W));c.height=Math.max(1,Math.round(Q.h*H));
+  c.getContext('2d').drawImage(img,Q.x*W,Q.y*H,c.width,c.height,0,0,c.width,c.height);c.toBlob(b=>close(b?{blob:b,url:URL.createObjectURL(b),r:c.width/c.height}:null),'image/jpeg',.85)});
+ ov.querySelector('[data-a="ok"]').focus()})}
+const ratioOf=u=>new Promise(ok=>{const im=new Image();im.onload=()=>ok(im.naturalWidth/im.naturalHeight||1.5);im.onerror=()=>ok(1.5);im.src=u});
 
 // ---------- gáy sách ----------
 const stats=b=>{const np=b.pages.length,ni=b.pages.reduce((s,p)=>s+(p.im||[]).length,0);return `${np} trang · ${ni} ảnh`};
@@ -154,7 +186,8 @@ function face(f,n,pv){
  if(f.endpaper)return '<div class="pg b-white"></div>';
  if(f.title)return `<div class="pg b-white"><div class="title"><h3>${esc(cur.title)}</h3><p>${esc(cur.sub||'')}</p></div></div>`;
  const im=f.im||[],ph=u=>`style="background-image:url('${u}')"`;let h='';
- if(f.l==='hero'&&im[0])h=`<div class="hero" ${ph(im[0])}></div><div class="cap" style="bottom:5%">${esc(f.t)}</div>`;
+ if(f.l==='ticket'&&im[0])h=tickets(f);
+ else if(f.l==='hero'&&im[0])h=`<div class="hero" ${ph(im[0])}></div><div class="cap" style="bottom:5%">${esc(f.t)}</div>`;
  else if(f.l==='quote'||!im.length)h=`<div class="cap big">${esc(f.t)}</div>`;
  else{const n=Math.min(im.length,5);
   const S=[[[14,14,72,-3]],[[6,5,52,-4],[40,50,52,3]],[[4,4,44,-4],[50,10,42,4],[24,58,50,-2]],[[3,3,38,-4],[55,5,38,3],[5,64,40,3],[53,62,40,-3]],[[3,3,38,-4],[55,5,36,3],[2,38,30,-3],[6,66,40,3],[53,64,40,-3]]][n-1];
@@ -275,48 +308,64 @@ function newBook(){
   try{books.push(await dbAddBook({title:t,sub:$('ns').value.trim(),c:col,a:+$('aa').dataset.v,t:34+Math.round(Math.random()*32)}));hide();tower();toast(`Đã xếp “${t}” lên kệ`)}catch(e){fail(e);bt.disabled=false}};
 }
 let heicP;const loadHeic=()=>heicP||(heicP=new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js';s.onload=ok;s.onerror=()=>{heicP=null;no(new Error('Không tải được bộ chuyển ảnh HEIC (cần mạng)'))};document.head.append(s)}));
-async function shrink(file){
+async function shrink(file,max=600){
  const name=file.name;
  if(/\.hei[cf]$/i.test(name)||/hei[cf]/i.test(file.type)){await loadHeic();const o=await heic2any({blob:file,toType:'image/jpeg',quality:.8});file=Array.isArray(o)?o[0]:o}
  const url=URL.createObjectURL(file);
  return new Promise((ok,no)=>{const im=new Image();
-  im.onload=()=>{const s=Math.min(1,600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(b=>{URL.revokeObjectURL(url);ok(b)},'image/jpeg',.7)};
+  im.onload=()=>{const s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(b=>{URL.revokeObjectURL(url);ok(b)},'image/jpeg',.7)};
   im.onerror=()=>{URL.revokeObjectURL(url);no(new Error('Không đọc được ảnh: '+name))};im.src=url})}
 
 function addPage(){
- const keep=cur;let imgs=[],urls=[];
+ const keep=cur;let imgs=[],urls=[],nts=[],rat=[];const isT=()=>LAY[$('ll').dataset.v]==='ticket',MAX=()=>isT()?3:5;
  show(`<div class="panel wide"><div class="phead">${ic('imagePlus')}<h3>Thêm trang cho “${esc(keep.title)}”</h3></div>
  <div class="pgrid"><div class="pv"><div class="pvp face" id="pvp"></div><p class="ph">Trang xem trước</p></div>
  <div class="form" id="frm"><label>Ảnh <span class="cnt" id="cnt">0 / 5</span></label>
- <div class="pslots" id="pslots"></div><input type="file" id="fi" accept="image/*,.heic,.heif" multiple hidden>
+ <div class="pslots" id="pslots"></div><div class="tkrows" id="tkr" hidden></div><input type="file" id="fi" accept="image/*,.heic,.heif" multiple hidden>
  <p class="ph">Kéo thả ảnh vào khung hoặc bấm ô có dấu cộng. Ảnh được nén trước khi tải lên.</p>
  <label>Kiểu trang</label><div class="chips lay" id="ll"></div>
  <label>Nền giấy</label><div class="chips paper" id="bg"></div>
  <label>Hình dán</label><div class="chips stkc" id="st"></div>
  <label for="tx">Ghi chú</label><textarea id="tx" maxlength="120" placeholder="Ví dụ: Một năm của chúng mình"></textarea></div></div>
  <div class="bar"><button class="btn" id="no">${ic('chevL')}Quay lại sách</button><button class="btn pri" id="ok">${ic('check')}Lưu trang</button></div></div>`);
- const val=()=>({l:LAY[$('ll').dataset.v],bg:BG[$('bg').dataset.v],im:urls,t:$('tx').value.trim()||'Ghi chú của bạn',s:STK[$('st').dataset.v]});
+ const val=()=>({l:LAY[$('ll').dataset.v],bg:BG[$('bg').dataset.v],im:urls,t:$('tx').value.trim()||(isT()?'':'Ghi chú của bạn'),s:STK[$('st').dataset.v],x:{tk:urls.slice(0,3).map((_,k)=>({n:nts[k]||'',r:rat[k]||1.5}))}});
  const prev=()=>{$('pvp').innerHTML=face(val(),0,1)};
- const draw=()=>{$('pslots').innerHTML=Array.from({length:5},(_,k)=>k<imgs.length?`<div class="pslot full"><img src="${urls[k]}" alt="Ảnh ${k+1}"><button type="button" class="rm" data-k="${k}" aria-label="Bỏ ảnh ${k+1}">${ic('x')}</button></div>`:k===imgs.length?`<button type="button" class="pslot add" id="pick" aria-label="Thêm ảnh">${ic('imagePlus')}<span>Thêm ảnh</span></button>`:`<div class="pslot"></div>`).join('');
-  $('cnt').textContent=imgs.length+' / 5';prev()};
- const addFiles=async fs=>{fs=fs.filter(f=>/^image\//.test(f.type)||/\.hei[cf]$/i.test(f.name)).slice(0,5-imgs.length);if(!fs.length)return;
+ const draw=()=>{const M=MAX();$('pslots').style.gridTemplateColumns=`repeat(${M},minmax(0,1fr))`;$('pslots').innerHTML=Array.from({length:M},(_,k)=>k<imgs.length?`<div class="pslot full"><img src="${urls[k]}" alt="Ảnh ${k+1}"><button type="button" class="rm" data-k="${k}" aria-label="Bỏ ảnh ${k+1}">${ic('x')}</button></div>`:k===imgs.length?`<button type="button" class="pslot add" id="pick" aria-label="Thêm ảnh">${ic('imagePlus')}<span>Thêm ảnh</span></button>`:`<div class="pslot"></div>`).join('');
+  $('cnt').textContent=Math.min(imgs.length,M)+' / '+M;
+  const tr=$('tkr');tr.hidden=!isT()||!imgs.length;tr.innerHTML=isT()?urls.slice(0,3).map((u,k)=>`<div class="tkrow"><img src="${u}" alt="Vé ${k+1}"><input type="text" data-k="${k}" maxlength="80" placeholder="Mặt sau vé ${k+1}: vd. Chuyến tàu đêm SE1" value="${esc(nts[k]||'')}" aria-label="Ghi chú mặt sau vé ${k+1}"><button type="button" class="btn" data-crop="${k}">${ic('crop')}Cắt</button></div>`).join(''):'';
+  prev()};
+ const addFiles=async fs=>{fs=fs.filter(f=>/^image\//.test(f.type)||/\.hei[cf]$/i.test(f.name)).slice(0,Math.max(0,MAX()-imgs.length));if(!fs.length)return;
   const p=$('pick');if(p){p.disabled=true;p.innerHTML=`${ic('camera')}<span>Đang xử lý</span>`}
-  const bad=[];for(const f of fs){try{const b=await shrink(f);imgs.push(b);urls.push(URL.createObjectURL(b))}catch(e){bad.push(e.message)}}
+  const bad=[];for(const f of fs){try{const b=await shrink(f,isT()?1100:600),u=URL.createObjectURL(b);imgs.push(b);urls.push(u);nts.push('');rat.push(await ratioOf(u))}catch(e){bad.push(e.message)}}
   draw();if(bad.length)toast(bad.join(' · '),1)};
- $('pslots').onclick=e=>{const rm=e.target.closest('.rm');if(rm){const k=+rm.dataset.k;URL.revokeObjectURL(urls[k]);imgs.splice(k,1);urls.splice(k,1);draw();return}if(e.target.closest('#pick'))$('fi').click()};
+ $('pslots').onclick=e=>{const rm=e.target.closest('.rm');if(rm){const k=+rm.dataset.k;URL.revokeObjectURL(urls[k]);imgs.splice(k,1);urls.splice(k,1);nts.splice(k,1);rat.splice(k,1);draw();return}if(e.target.closest('#pick'))$('fi').click()};
  $('fi').onchange=e=>{const f=[...e.target.files];e.target.value='';addFiles(f)};
  const fr=$('frm');fr.ondragover=e=>{e.preventDefault();fr.classList.add('drop')};fr.ondragleave=e=>{if(!fr.contains(e.relatedTarget))fr.classList.remove('drop')};
  fr.ondrop=e=>{e.preventDefault();fr.classList.remove('drop');addFiles([...e.dataTransfer.files])};
- chips('ll',LAY.map((l,k)=>LAYIC[l]+`<span>${LAYN[k]}</span>`),prev);
+ chips('ll',LAY.map((l,k)=>LAYIC[l]+`<span>${LAYN[k]}</span>`),()=>{if(isT()&&imgs.length>3)toast('Kiểu vé dùng tối đa 3 ảnh, 3 ảnh đầu sẽ được giữ');draw()});
+ $('tkr').oninput=e=>{const k=e.target.dataset.k;if(k!=null){nts[+k]=e.target.value;prev()}};
+ $('tkr').onclick=async e=>{const b=e.target.closest('[data-crop]');if(!b)return;const k=+b.dataset.crop,res=await cropImg(urls[k]);if(!res)return;URL.revokeObjectURL(urls[k]);imgs[k]=res.blob;urls[k]=res.url;rat[k]=res.r;draw()};
  chips('bg',BG.map((b,k)=>`<i class="b-${b}"></i><span>${BGN[k]}</span>`),prev);
  chips('st',STK.map(s=>s||ic('x')),prev);
  $('tx').oninput=prev;draw();
  $('no').onclick=()=>openBook(keep.id);
  $('ok').onclick=async()=>{const bt=$('ok');bt.disabled=true;bt.innerHTML=`${ic('camera')}Đang tải ảnh lên...`;
-  try{keep.pages.push(await dbAddPage(keep,{l:LAY[$('ll').dataset.v],bg:BG[$('bg').dataset.v],t:$('tx').value.trim(),s:STK[$('st').dataset.v]},imgs))}catch(e){fail(e);bt.disabled=false;bt.innerHTML=`${ic('check')}Lưu trang`;return}
+  const T=isT(),use=T?imgs.slice(0,3):imgs;
+  try{keep.pages.push(await dbAddPage(keep,{l:LAY[$('ll').dataset.v],bg:BG[$('bg').dataset.v],t:$('tx').value.trim(),s:STK[$('st').dataset.v],x:T?{tk:use.map((_,k)=>({n:(nts[k]||'').trim(),r:+(rat[k]||1.5).toFixed(3)}))}:null},use))}catch(e){fail(e);bt.disabled=false;bt.innerHTML=`${ic('check')}Lưu trang`;return}
   urls.forEach(u=>URL.revokeObjectURL(u));
   openBook(keep.id);openCover();buildFaces();const idx=1+keep.pages.length;i=single()?idx:idx-(idx%2);paint();toast('Đã thêm trang')};
 }
+
+// ---------- Xoay ngang trên điện thoại ----------
+// Trình duyệt không cho web tự xoay màn hình. Android cho phép khóa ngang khi đang toàn màn hình (sau một lần bấm),
+// còn iPhone thì không: lúc đó chỉ nhắc người xem tự xoay. Bấm "Vẫn xem dọc" thì không nhắc lại trong lần xem này.
+const canLock=()=>!!(screen.orientation&&screen.orientation.lock&&document.documentElement.requestFullscreen);
+{const r=document.createElement('div');r.className='rot';r.setAttribute('role','dialog');r.setAttribute('aria-label','Xoay ngang điện thoại');
+ r.innerHTML=`<div class="rbox"><div class="rph" aria-hidden="true"><i></i></div><p><b>Xoay ngang điện thoại</b>Kệ sách và quyển sách mở ra sẽ rộng và đẹp hơn.</p>${canLock()?`<button class="btn pri" id="rgo" type="button">${ic('rotate')}Xoay ngang toàn màn hình</button>`:''}<button class="rskip" id="rskip" type="button">Vẫn xem dọc</button></div>`;
+ document.body.append(r);try{if(sessionStorage.getItem('ksk3portrait'))document.body.classList.add('portrait-ok')}catch(e){}
+ $('rskip').onclick=()=>{document.body.classList.add('portrait-ok');try{sessionStorage.setItem('ksk3portrait','1')}catch(e){}};
+ if($('rgo'))$('rgo').onclick=async()=>{try{await document.documentElement.requestFullscreen({navigationUI:'hide'});await screen.orientation.lock('landscape')}
+  catch(e){try{if(document.fullscreenElement)await document.exitFullscreen()}catch(_){}toast('Máy này không cho web tự xoay. Hãy tắt khóa xoay màn hình rồi xoay ngang điện thoại.',1)}}}
 
 // ---------- khởi động ----------
 document.querySelectorAll('[data-ic]').forEach(b=>b.insertAdjacentHTML('afterbegin',ic(b.dataset.ic)));

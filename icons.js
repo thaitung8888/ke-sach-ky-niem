@@ -1,5 +1,8 @@
 // Bộ icon nét mảnh dùng chung cho toàn trang. Gọi ic('ten') để lấy thẻ <svg>.
 const ICONS={
+ rotate:'<rect x="3" y="8" width="18" height="10" rx="2"/><path d="M7 3.5a6.5 6.5 0 0 1 9 1.2"/><path d="M16.6 2.2l-.4 2.7-2.7-.4"/>',
+ ticket:'<path d="M3.5 6.5h17v3.5a2 2 0 0 0 0 4v3.5h-17V14a2 2 0 0 0 0-4z"/><path d="M15 7v10" stroke-dasharray="1.4 2"/>',
+ crop:'<path d="M6.5 2.5v13a2 2 0 0 0 2 2h13"/><path d="M17.5 21.5v-13a2 2 0 0 0-2-2h-13"/>',
  vol:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>',
  volX:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>',
  shelfUp:'<path d="M3 20h18"/><rect x="5" y="6" width="3.2" height="14" rx=".6"/><rect x="9.2" y="4" width="3.2" height="16" rx=".6"/><path d="M14.4 19.6l3-12.6 3.1.8-3 12.6"/>',
@@ -27,5 +30,6 @@ const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true" 
 const LAYIC={
  scatter:'<svg viewBox="0 0 40 52" aria-hidden="true"><rect width="40" height="52" rx="2" fill="#fff"/><rect x="4" y="5" width="15" height="17" fill="#c9d9e6" transform="rotate(-6 11 13)"/><rect x="21" y="8" width="15" height="17" fill="#e8d2b8" transform="rotate(5 28 16)"/><rect x="11" y="28" width="16" height="18" fill="#cfe3cf" transform="rotate(-3 19 37)"/></svg>',
  hero:'<svg viewBox="0 0 40 52" aria-hidden="true"><rect width="40" height="52" rx="2" fill="#fff"/><rect x="4" y="4" width="32" height="33" fill="#c9d9e6" stroke="#fbfaf6" stroke-width="2" transform="rotate(-2 20 20)"/><rect x="9" y="42" width="22" height="2.5" rx="1" fill="#b9a78d"/></svg>',
+ ticket:'<svg viewBox="0 0 40 52" aria-hidden="true"><rect width="40" height="52" rx="2" fill="#fff"/><g transform="rotate(-6 20 15)"><path d="M5 8h30v14H5z" fill="#e8c15a"/><circle cx="27" cy="8" r="2" fill="#fff"/><circle cx="27" cy="22" r="2" fill="#fff"/><path d="M27 10v10" stroke="#fff" stroke-dasharray="1.4 1.4"/></g><path d="M12 27h17v19l-1.7-1.6-1.7 1.6-1.7-1.6-1.7 1.6-1.7-1.6-1.7 1.6-1.7-1.6-1.7 1.6-1.7-1.6-1.7 1.6z" fill="#f2ece0" stroke="#d9cdb6" stroke-width=".6" transform="rotate(4 20 36)"/><path d="M15 31h11M15 34h8M15 37h10" stroke="#b9a78d" stroke-width="1" transform="rotate(4 20 36)"/></svg>',
  quote:'<svg viewBox="0 0 40 52" aria-hidden="true"><rect width="40" height="52" rx="2" fill="#fff"/><rect x="7" y="19" width="26" height="2.5" rx="1" fill="#b9a78d"/><rect x="9" y="25" width="22" height="2.5" rx="1" fill="#b9a78d"/><rect x="12" y="31" width="16" height="2.5" rx="1" fill="#b9a78d"/></svg>'
 };
