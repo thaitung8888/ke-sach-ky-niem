@@ -23,6 +23,16 @@ room/                   CĂN PHÒNG, trang chủ (#/phong)
   room.js               vẽ phòng, các món đồ, phóng vào từng khu vực; đổi tên ở ROOM_NAME
   room.css              màu tường / sàn / trời theo giờ
 
+wardrobe/               TỦ ĐỒ SƯU TẦM (#/tu-do)  — chạy supabase-tu-do.sql trước
+  wardrobe-db.js        bảng garments
+  wardrobe.js           thanh treo áo, trang chi tiết, thêm/sửa/xóa, tự tách nền
+  wardrobe.css
+
+habit/                  LỊCH LUYỆN TẬP  (#/lich-tap)
+  habit-db.js           bảng habits (đọc qua habits_view), checkins, rest_days; ngày theo giờ VN
+  habit.js              màn Hôm nay, bảng ô vuông 365 ngày, chuỗi ngày, thống kê
+  habit.css             màu xanh xô thơm 5 mức
+
 shelf/                  khu vực KỆ SÁCH KỶ NIỆM  (#/ke-sach)
   shelf-db.js           bảng books, pages, kho ảnh photos
   nooks.js              các book nook 3D

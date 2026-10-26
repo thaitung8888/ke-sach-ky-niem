@@ -12,7 +12,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Be+Vietnam+Pro:wght@400;500;600&family=Caveat:wght@600&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="core/base.css">
 <link rel="stylesheet" href="shelf/shelf.css">
-<link rel="stylesheet" href="room/room.css"></head><body data-time="day">
+<link rel="stylesheet" href="room/room.css">
+<link rel="stylesheet" href="wardrobe/wardrobe.css">
+<link rel="stylesheet" href="habit/habit.css"></head><body data-time="day">
 <section class="room" data-room="phong" hidden>
 <header class="rhead"><h1 id="rname">Căn phòng</h1><p>Bấm vào một món đồ để bước vào.</p></header>
 <div class="scene" id="scene"></div>
@@ -27,6 +29,15 @@
 <main><div class="tower" id="tower"></div></main>
 <button class="addbook" id="addbook" data-ic="bookPlus">Làm quyển sách mới</button>
 </section>
+<section class="room" data-room="tu-do" hidden>
+<header class="whead"><a class="back" href="#/phong" data-ic="chevL">Căn phòng</a><h1>Tủ đồ sưu tầm</h1><p id="wcount"></p></header>
+<div class="wstage" id="wstage"></div>
+<button class="addbook adm" id="addg" data-ic="imagePlus">Thêm món đồ</button>
+</section>
+<section class="room" data-room="lich-tap" hidden>
+<header><a class="back" href="#/phong" data-ic="chevL">Căn phòng</a><h1>Lịch luyện tập</h1><p>Mỗi ô là một ngày, càng xanh đậm là càng chăm.</p></header>
+<div class="hwrap" id="hwrap"></div>
+</section>
 <footer id="foot"></footer>
 <div class="ov" id="ov"><button class="x" id="close" aria-label="Đóng" data-ic="x"></button><div id="slot" style="margin:auto"></div></div>
 <div class="dlg" id="dlg"></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -39,5 +50,9 @@
 <script src="shelf/shelf-db.js"></script>
 <script src="shelf/nooks.js"></script>
 <script src="shelf/shelf.js"></script>
+<script src="wardrobe/wardrobe-db.js"></script>
+<script src="wardrobe/wardrobe.js"></script>
+<script src="habit/habit-db.js"></script>
+<script src="habit/habit.js"></script>
 <script src="room/room.js"></script>
 <script src="core/start.js"></script></body></html>

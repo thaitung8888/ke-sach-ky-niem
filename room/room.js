@@ -166,17 +166,18 @@ function deskArt(){const k=.84,x=300,w=330,top=520,th=14,F=p=>fromVP(p,k),fA=F([
 
 // Bảng lịch luyện tập treo tường (chỗ chừa sẵn, sắp có).
 function calendarArt(){const x=318,y=170,w=176,h=156,k=.985,F=fromVP([x,y],k),G=fromVP([x+w,y+h],k);
- const cw=(G[0]-F[0]-24)/7,chh=(G[1]-F[1]-56)/5;let cells='';
- for(let r=0;r<5;r++)for(let c=0;c<7;c++){const cx=F[0]+12+c*cw,cy=F[1]+44+r*chh,n=r*7+c+1;if(n>30)continue;
-  cells+=`<rect x="${(cx+1).toFixed(1)}" y="${(cy+1).toFixed(1)}" width="${(cw-2).toFixed(1)}" height="${(chh-2).toFixed(1)}" fill="#fbf8f2"/><text x="${(cx+3).toFixed(1)}" y="${(cy+8).toFixed(1)}" font-size="6" fill="#a59780" font-family="Be Vietnam Pro,system-ui">${n}</text>`;
-  if([2,4,9,11,16,18,23].includes(n))cells+=`<circle cx="${(cx+cw/2+2).toFixed(1)}" cy="${(cy+chh/2+2).toFixed(1)}" r="${(Math.min(cw,chh)/3.4).toFixed(1)}" fill="none" stroke="#c0503b" stroke-width="1.6"/>`}
+ // Tháng hiện tại: mỗi ô tô màu theo mức hoàn thành thật (xanh xô thơm), hôm nay có viền đậm.
+ const t=dayKey(),[yy,mm]=t.split('-').map(Number),first=`${yy}-${String(mm).padStart(2,'0')}-01`,off=isoDow(first)-1,dim=new Date(Date.UTC(yy,mm,0)).getUTCDate(),rows=Math.ceil((off+dim)/7);
+ const LV=['#fbf8f2','#d3dec8','#a8c098','#7b9c6b','#52774a'],cw=(G[0]-F[0]-24)/7,chh=(G[1]-F[1]-52)/rows;let cells='';
+ for(let n=1;n<=dim;n++){const p=off+n-1,cx=F[0]+12+(p%7)*cw,cy=F[1]+42+Math.floor(p/7)*chh,d=`${first.slice(0,8)}${String(n).padStart(2,'0')}`;
+  let fill=LV[0],tc='#a59780';if(HB.loaded&&d<=t){const s=dayStat(d);if(s.rest)fill='#ecd9b0';else if(!s.none){const l=hlevel(s.p);fill=LV[l];if(l>=3)tc='#fff'}}
+  cells+=`<rect x="${(cx+1).toFixed(1)}" y="${(cy+1).toFixed(1)}" width="${(cw-2).toFixed(1)}" height="${(chh-2).toFixed(1)}" rx="1.5" fill="${fill}"${d===t?' stroke="#3b2d20" stroke-width="1.4"':''}/><text x="${(cx+3).toFixed(1)}" y="${(cy+7.5).toFixed(1)}" font-size="5.6" fill="${tc}" font-family="Be Vietnam Pro,system-ui">${n}</text>`}
  return `${blurSh(`M${G[0]-4} ${F[1]+10}L${G[0]+16} ${F[1]+18}L${G[0]+16} ${G[1]+14}L${F[0]+12} ${G[1]+14}z`,'calc(var(--sun)*.18 + .06)','sh1')}
   ${box(x,y,w,h,k,{f:'#efe7d8',t:'#d9ccb6',b:'#c9b99e',l:'#d6c8b0',r:'#cdbfa5'})}
   <rect x="${F[0]+6}" y="${F[1]+6}" width="${G[0]-F[0]-12}" height="${G[1]-F[1]-12}" fill="#e8dcc6"/>
-  <text x="${F[0]+12}" y="${F[1]+25}" font-size="13" fill="#3b2d20" font-family="Anton,Impact,sans-serif" letter-spacing=".5">LỊCH TẬP</text><text x="${G[0]-12}" y="${F[1]+24}" font-size="8" text-anchor="end" fill="#8a7a62" font-family="Be Vietnam Pro,system-ui">THÁNG 11</text>
-  <g font-size="6" fill="#a59780" font-family="Be Vietnam Pro,system-ui">${['T2','T3','T4','T5','T6','T7','CN'].map((d,c)=>`<text x="${(F[0]+14+c*cw).toFixed(1)}" y="${F[1]+38}">${d}</text>`).join('')}</g>${cells}
-  <circle cx="${(F[0]+G[0])/2}" cy="${F[1]-3}" r="3" fill="#7a6a4f"/>
-  <g transform="rotate(-6 ${G[0]-24} ${G[1]-4})"><rect x="${G[0]-56}" y="${G[1]-16}" width="64" height="21" rx="3" fill="#f3e3c3" stroke="#b9975e"/><text x="${G[0]-24}" y="${G[1]-1}" font-size="9.5" font-weight="600" text-anchor="middle" fill="#7a5a3a" font-family="Be Vietnam Pro,system-ui">SẮP CÓ</text></g>`}
+  <text x="${F[0]+12}" y="${F[1]+24}" font-size="13" fill="#3b2d20" font-family="Anton,Impact,sans-serif" letter-spacing=".5">LỊCH TẬP</text><text x="${G[0]-12}" y="${F[1]+23}" font-size="8" text-anchor="end" fill="#8a7a62" font-family="Be Vietnam Pro,system-ui">THÁNG ${mm}</text>
+  <g font-size="5.6" fill="#a59780" font-family="Be Vietnam Pro,system-ui">${['T2','T3','T4','T5','T6','T7','CN'].map((d,c)=>`<text x="${(F[0]+14+c*cw).toFixed(1)}" y="${F[1]+36}">${d}</text>`).join('')}</g>${cells}
+  <circle cx="${(F[0]+G[0])/2}" cy="${F[1]-3}" r="3" fill="#7a6a4f"/>`}
 
 // Đồng hồ treo tường chạy theo giờ thật.
 const CLK={x:566,y:226,r:34};
@@ -191,8 +192,8 @@ setInterval(tickClock,20000);
 // Hốc tường tủ đồ: thanh treo, áo, đèn rọi.
 function wardrobeArt(){const x=1010,y=150,w=300,h=WALL.b-y,k=.9,B=p=>toVP(p,k);
  const b0=B([x,y]),b1=B([x+w,y]),b2=B([x+w,y+h]),rodY=b0[1]+64,rx0=b0[0]+8,rx1=b1[0]-8;
- const cols=['#2c3e5c','#6f747a','#e6dcc6','#2f6b4a','#1f1f22','#c9b98f','#3f8f5a','#a24d3a'];
- const tees=cols.map((c,j)=>{const tx=rx0+20+j*((rx1-rx0-40)/(cols.length-1)),len=j%3!==1?92:72;
+ const cols=garments.length?garments.slice(0,8).map(g=>g.c):['#2c3e5c','#6f747a','#e6dcc6','#2f6b4a','#1f1f22','#c9b98f','#3f8f5a','#a24d3a'];
+ const tees=cols.map((c,j)=>{const tx=cols.length<2?(rx0+rx1)/2:rx0+20+j*((rx1-rx0-40)/(cols.length-1)),len=j%3!==1?92:72;
   return `<g class="tee" style="--j:${j}"><path d="M${tx} ${rodY}q0-7 5-7" stroke="#555" stroke-width="1.6" fill="none"/><path d="M${tx-12} ${rodY+10}l12-6l12 6" stroke="#7a6a4f" stroke-width="1.6" fill="none"/>
    <path d="M${tx-15} ${rodY+12}l9-4h12l9 4 6 18-8 3v${len-16}q-13 4-26 0v-${len-16}l-8-3z" fill="${c}"/><path d="M${tx-6} ${rodY+8}q6 6 12 0" stroke="rgba(0,0,0,.25)" stroke-width="1.4" fill="none"/>
    <path d="M${tx+9} ${rodY+20}v${len-12}" stroke="#000" stroke-width="5" opacity=".08"/><path d="M${tx-9} ${rodY+20}v${len-14}" stroke="#fff" stroke-width="2" opacity=".1"/></g>`}).join('');
@@ -209,7 +210,7 @@ function wardrobeArt(){const x=1010,y=150,w=300,h=WALL.b-y,k=.9,B=p=>toVP(p,k);
  EM.push(`<ellipse class="emspot" cx="${(b0[0]+b1[0])/2}" cy="${b0[1]+5}" rx="16" ry="4"/><path class="emcone" d="M${(b0[0]+b1[0])/2-14} ${b0[1]+6}L${b0[0]+10} ${b2[1]}H${b1[0]-10}L${(b0[0]+b1[0])/2+14} ${b0[1]+6}z"/>`);
  return `${recess('nicheClip',x,y,w,h,k,{back:'#e2d9cb',t:'#cfc4b3',b:'#cdb08a',l:'#d9cfbf',r:'#d4c9b8'},inside)}
   <rect x="${x-3}" y="${y-3}" width="${w+6}" height="${h+3}" fill="none" stroke="#fbf8f2" stroke-width="5"/><rect x="${x-0.5}" y="${y-0.5}" width="${w+1}" height="${h+0.5}" fill="none" stroke="#c9bba6" stroke-width="1"/>
-  <line x1="${x+w/2}" y1="${y+8}" x2="${x+w/2}" y2="${y+32}" stroke="#7a6a4f"/><rect x="${x+w/2-50}" y="${y+28}" width="100" height="22" rx="4" fill="#f3e3c3" stroke="#b9975e"/><text x="${x+w/2}" y="${y+43}" text-anchor="middle" font-size="10.5" font-weight="600" fill="#7a5a3a" font-family="Be Vietnam Pro,system-ui">SẮP MỞ CỬA</text>`}
+`}
 
 // Công tắc đèn trên tường.
 function switchArt(){return `<rect x="1312" y="408" width="20" height="32" rx="3" fill="#fbf8f2" stroke="#d6cbb9"/><rect class="swk" x="1318" y="414" width="8" height="12" rx="2" fill="#e6ddcf" stroke="#cfc4b3"/><rect x="1314" y="438" width="20" height="5" fill="#3a2a1c" opacity=".08" filter="url(#sh1)"/>`}
@@ -232,8 +233,8 @@ function plantArt(){const x=1480,y=890;
 const OBJS=[
  {id:'ke-sach',name:'Kệ sách kỷ niệm',open:true,art:bookcaseArt,sub:()=>books.length?`${books.length} quyển`:'Mở kệ sách'},
  {id:'ban',name:'Bàn làm việc',art:deskArt,sub:()=>'Sắp ra mắt'},
- {id:'lich-tap',name:'Lịch luyện tập',art:calendarArt,sub:()=>'Sắp có'},
- {id:'tu-do',name:'Tủ đồ sưu tầm',art:wardrobeArt,sub:()=>'Sắp mở cửa'}];
+ {id:'lich-tap',name:'Lịch luyện tập',open:true,art:calendarArt,sub:()=>{if(!HB.loaded)return 'Mở lịch tập';const s=dayStat(dayKey()),a=allStreak();return `${a.cur?`🔥 ${a.cur} ngày · `:''}hôm nay ${s.n?`${s.done}/${s.n}`:'nghỉ'}`}},
+ {id:'tu-do',name:'Tủ đồ sưu tầm',open:true,art:wardrobeArt,sub:()=>garments.length?`${garments.length} món`:'Mở tủ đồ'}];
 
 function drawRoom(){const sc=$('scene');if(!sc)return;EM=[];
  const o=id=>OBJS.find(x=>x.id===id),g=x=>`<g class="obj${x.open?'':' soon'}" data-go="${x.id}" tabindex="0" role="button" aria-label="${x.name}: ${x.sub()}">${x.art()}</g>`;
@@ -275,5 +276,5 @@ document.addEventListener('keydown',e=>{const b=e.target.closest&&e.target.close
 if(store.get('ksk3lights')==='0')document.body.classList.add('lights-off');
 
 room('phong',{title:ROOM_NAME,enter(from){$('rname').textContent=ROOM_NAME;drawRoom();scrollTo({top:0,behavior:'instant'});
- if(from)zoomFrom(from);if(!books.length)loadBooks().then(()=>{if(curRoom==='phong')drawRoom()})}});
+ if(from)zoomFrom(from);if(!books.length)loadBooks().then(()=>{if(curRoom==='phong')drawRoom()});loadGarments();loadHabits()}});
 hooks.books.push(()=>{if(curRoom==='phong')drawRoom()});
