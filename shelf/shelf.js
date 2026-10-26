@@ -357,12 +357,21 @@ function addPage(){
 }
 
 // Tải lại kệ khi chủ kệ đăng nhập / đăng xuất (để hiện hoặc ẩn sách riêng tư).
-async function reload(){try{books=await dbLoadBooks()}catch(e){fail(e)}if(cur)hide();tower()}
+async function reload(){try{books=await dbLoadBooks();booksP=Promise.resolve(books)}catch(e){fail(e)}if(cur)hide();if(curRoom==='ke-sach')tower();hooks.books.forEach(f=>f())}
+// Tải sách một lần, dùng chung cho kệ sách và kệ thu nhỏ trong căn phòng.
+let booksP=null;
+const loadBooks=()=>booksP||(booksP=dbLoadBooks().then(b=>{books=b;hooks.books.forEach(f=>f());return b}).catch(e=>{booksP=null;fail(e);return books}));
 hooks.auth.push(reload);
 
-// ---------- vào khu vực kệ sách (lần đầu thì tải dữ liệu) ----------
+// ---------- vào khu vực kệ sách ----------
+// Đi từ căn phòng vào thì mở ở góc nhìn xa (toàn cảnh tủ sách) cho liền mạch với kệ thu nhỏ trong phòng.
 let shelfReady=false;
-room('ke-sach',{title:'Kệ sách kỷ niệm',enter(){if(shelfReady){tower();return}shelfReady=true;
- look=store.get('ksk3view')==='far'?'far':'near';drawView();layout=store.get('ksk3layout')||'up';nook=store.get('ksk3nook')!=='0';
+room('ke-sach',{title:'Kệ sách kỷ niệm',enter(from){scrollTo({top:0,behavior:'instant'});
+ if(from==='phong'){look='far';drawView()}
+ const sec=document.querySelector('[data-room=ke-sach]');if(from&&!RM())sec.animate([{opacity:0,transform:'scale(.97)'},{opacity:1,transform:'none'}],{duration:420,easing:'ease-out'});
+ if(shelfReady){tower();return}shelfReady=true;
+ if(from!=='phong')look=store.get('ksk3view')==='far'?'far':'near';drawView();layout=store.get('ksk3layout')||'up';nook=store.get('ksk3nook')!=='0';
  $('l3').classList.toggle('on',nook);$('l3').setAttribute('aria-pressed',nook);
- (async()=>{$('tower').innerHTML='<p class="empty">Đang tải kệ sách...</p>';try{books=await dbLoadBooks()}catch(e){fail(e)}setLayout(layout)})()}});
+ (async()=>{$('tower').innerHTML='<p class="empty">Đang tải kệ sách...</p>';await loadBooks();setLayout(layout)})()},
+ leave(){if(cur)hide()}});
+

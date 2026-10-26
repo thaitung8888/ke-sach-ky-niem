@@ -19,6 +19,10 @@ core/                   dùng chung cho cả căn phòng
   start.js              khởi động (nạp sau cùng)
   base.css              giao diện dùng chung
 
+room/                   CĂN PHÒNG, trang chủ (#/phong)
+  room.js               vẽ phòng, các món đồ, phóng vào từng khu vực; đổi tên ở ROOM_NAME
+  room.css              màu tường / sàn / trời theo giờ
+
 shelf/                  khu vực KỆ SÁCH KỶ NIỆM  (#/ke-sach)
   shelf-db.js           bảng books, pages, kho ảnh photos
   nooks.js              các book nook 3D
@@ -27,6 +31,9 @@ shelf/                  khu vực KỆ SÁCH KỶ NIỆM  (#/ke-sach)
 ```
 
 ## Thêm một khu vực mới (ví dụ tủ đồ)
+
+Trong `room/room.js`, món đồ đã có sẵn trong `OBJS`; khi khu vực làm xong thì đặt `open:true` cho nó.
+
 
 1. Tạo thư mục `wardrobe/` với `wardrobe.js`, `wardrobe.css`.
 2. Thêm `<section class="room" data-room="tu-do" hidden>…</section>` vào `index.html`,

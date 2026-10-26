@@ -1,0 +1,76 @@
+/* Giao diện CĂN PHÒNG (sảnh chính). Phòng vẽ theo màu ban ngày; hoàng hôn và ban đêm phủ thêm lớp màu + các vùng đèn. */
+:root{--sun:1;--rdark:0;--rdusk:0;--glow:0;--paper:#f8f2e4;--hill:#8fb27d;--hill2:#6f9c63}
+body[data-time=dusk]{--sun:.75;--rdark:.18;--rdusk:.32;--glow:.5;--hill:#6a6a5a;--hill2:#4f5a48}
+body[data-time=night]{--sun:0;--rdark:.8;--rdusk:0;--glow:1;--paper:#ffe3b0;--hill:#1f2a2c;--hill2:#162022}
+body.lights-off{--glow:.15}
+body.lights-off[data-time=night]{--rdark:.84}
+.back{position:absolute;left:max(14px,env(safe-area-inset-left,0px));top:calc(14px + env(safe-area-inset-top,0px));display:inline-flex;align-items:center;gap:4px;padding:7px 13px 7px 9px;border-radius:99px;border:1.5px solid var(--ink);color:var(--ink);text-decoration:none;font:500 13px var(--sans);z-index:5;transition:background .2s,color .2s}
+.back:hover,.back:focus-visible{background:var(--ink);color:var(--onink);outline:none}
+[data-room=ke-sach] header{position:relative}
+.rhead{text-align:center;padding:22px 16px 6px}
+.rhead p{margin:8px auto 0;opacity:.7;font-size:14px}
+.scene{position:relative;width:min(calc(100vw - 24px),calc((100svh - 150px)*1.7778),1500px);aspect-ratio:16/9;margin:12px auto 26px;border-radius:16px;overflow:hidden;
+ box-shadow:0 40px 70px -34px rgba(40,28,18,.55),0 0 0 1px rgba(0,0,0,.06);background:#efe8dc}
+.rbg{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* ánh nắng, bụi, đèn */
+.rsun{opacity:var(--sun)}
+.mote{animation:mote 7s ease-in-out infinite}
+@keyframes mote{0%,100%{transform:translate(0,0);opacity:.15}50%{transform:translate(18px,-26px);opacity:.9}}
+.rnight{opacity:calc(1 - var(--sun))}
+.rnight .tw{animation:ntw 3s ease-in-out infinite}
+.rbulb{fill:#fffaf0}
+body[data-time=night] .rbulb{fill:#ffe2a8}
+body.lights-off .rbulb{fill:#d9d1c4}
+.dark{fill:#141a35;mix-blend-mode:multiply;opacity:var(--rdark)}
+.dusk{fill:#f08a4b;mix-blend-mode:multiply;opacity:var(--rdusk)}
+.lampg{fill:url(#gPool);opacity:calc(var(--glow)*.55)}
+.lampg2{fill:url(#gPool);opacity:calc(var(--glow)*.3)}
+.led{fill:#ffe7b8;opacity:calc(.35 + var(--glow)*.65)}
+.ledg{fill:url(#gPool);opacity:calc(.12 + var(--glow)*.55)}
+.ledg2{fill:url(#gPool);opacity:calc(var(--glow)*.35)}
+body.lights-off .ledg2,body.lights-off .lampg2,body.lights-off .spotg{opacity:0}
+.spot{fill:url(#gPool);opacity:calc(.25 + var(--glow)*.6)}
+.spot2{fill:#fff6e0}
+.spotg{fill:url(#gPool);opacity:calc(var(--glow)*.4)}
+.crt{fill:#cfe7d2}
+body[data-time=night] .crt{fill:#123224}
+body[data-time=night] .crtt{fill:#8ff0b0}
+.crtg{fill:url(#gCrt);opacity:calc((1 - var(--sun))*.6)}
+.moong{fill:url(#gMoon);opacity:calc((1 - var(--sun))*.6)}
+.blink{animation:blink 1s steps(1) infinite}@keyframes blink{50%{opacity:0}}
+.steam path{animation:nst 3.2s ease-out infinite}
+.leafs{animation:leafs 6s ease-in-out infinite alternate}
+@keyframes leafs{from{transform:rotate(-1.2deg)}to{transform:rotate(1.4deg)}}
+/* món đồ: sáng viền khi rê chuột hoặc chọn bằng bàn phím */
+.obj{cursor:pointer;outline:none;transition:filter .3s}
+.obj:hover{filter:drop-shadow(0 0 6px rgba(255,214,150,.95)) drop-shadow(0 0 18px rgba(255,200,120,.55))}
+.obj:focus-visible{filter:drop-shadow(0 0 4px #e8a33a) drop-shadow(0 0 16px rgba(232,163,58,.7))}
+.obj.nope{animation:nope .45s;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes nope{20%{transform:rotate(-1deg)}45%{transform:rotate(.8deg)}70%{transform:rotate(-.4deg)}}
+.tee{transform-box:fill-box;transform-origin:50% 0}
+.obj:hover .tee{animation:none;--x:tee 1.6s ease-in-out;animation-delay:calc(var(--j)*60ms)}
+@keyframes tee{25%{transform:rotate(-4deg)}55%{transform:rotate(3deg)}80%{transform:rotate(-1deg)}}
+.otag{position:absolute;translate:-50% calc(-100% + 4px);display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 12px;border-radius:9px;background:rgba(32,26,22,.88);color:#fff8ee;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s,translate .2s;z-index:3}
+.otag.on{opacity:1;translate:-50% calc(-100% - 6px)}
+.otag b{font:400 15px/1.1 var(--disp);letter-spacing:.04em;text-transform:uppercase}
+.otag small{font:500 11px var(--sans);opacity:.75}
+/* nút công tắc thật nằm đè lên hình công tắc trên tường */
+.lightsw{position:absolute;left:81.4%;top:44.4%;width:2.2%;height:5.6%;border:0;background:none;cursor:pointer;padding:0;border-radius:4px}
+.lightsw:focus-visible{outline:2px solid #e8a33a}
+body.lights-off .swk{transform:translateY(8px)}
+@media (orientation:landscape) and (max-height:520px){.rhead{padding:6px 16px 0}.rhead h1{font-size:22px}.rhead p{display:none}.scene{width:min(calc(100vw - 24px),calc((100svh - 60px)*1.7778));margin-top:6px}}
+
+/* nguồn sáng phía trên lớp tối */
+.em{opacity:calc(1 - var(--sun))}
+body[data-time=dusk] .em{opacity:.55}
+.emled{fill:#fff1cf;filter:drop-shadow(0 0 4px #ffcf7a)}
+.empool{fill:url(#gPool);mix-blend-mode:screen;opacity:calc(var(--glow)*.45)}
+.emcrt{fill:#163b2a;filter:drop-shadow(0 0 10px rgba(120,255,170,.55))}
+.emcrtt{fill:#9ff5bf}
+.emlamp{fill:#ffe9bf;opacity:var(--glow);filter:drop-shadow(0 0 18px #ffc56e)}
+.emrib{stroke:#f1cf93;stroke-width:1}
+body.lights-off .emlamp,body.lights-off .emrib{opacity:.06}
+.emspot{fill:#fff6e0;opacity:var(--glow)}
+.emcone{fill:url(#gCone);mix-blend-mode:screen;opacity:calc(var(--glow)*.7)}
+.embulb{fill:#ffe9bf;opacity:var(--glow)}
+.embeam{fill:url(#gCone);mix-blend-mode:screen;opacity:calc(var(--glow)*.2)}

@@ -8,7 +8,7 @@ const hue=h=>{let[r,g,b]=rgb(h).map(v=>v/255);const m=Math.max(r,g,b),n=Math.min
 const RM=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
 let me=null,timePref='auto',booted=false;
 // Các khu vực đăng ký việc cần làm khi đóng lớp phủ hoặc khi đăng nhập / đăng xuất.
-const hooks={hide:[],auth:[]};
+const hooks={hide:[],auth:[],books:[]};
 const authChanged=()=>Promise.all(hooks.auth.map(f=>f()));
 const hs=s=>{let h=7;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return h};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));

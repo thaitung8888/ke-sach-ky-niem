@@ -11,9 +11,14 @@
 <link rel="icon" type="image/png" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Be+Vietnam+Pro:wght@400;500;600&family=Caveat:wght@600&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="core/base.css">
-<link rel="stylesheet" href="shelf/shelf.css"></head><body data-time="day">
-<section class="room" data-room="ke-sach">
-<header><h1>Kệ sách kỷ niệm</h1><p id="hint">Mỗi chuyến đi là một quyển.</p>
+<link rel="stylesheet" href="shelf/shelf.css">
+<link rel="stylesheet" href="room/room.css"></head><body data-time="day">
+<section class="room" data-room="phong" hidden>
+<header class="rhead"><h1 id="rname">Căn phòng</h1><p>Bấm vào một món đồ để bước vào.</p></header>
+<div class="scene" id="scene"></div>
+</section>
+<section class="room" data-room="ke-sach" hidden>
+<header><a class="back" href="#/phong" data-ic="chevL">Căn phòng</a><h1>Kệ sách kỷ niệm</h1><p id="hint">Mỗi chuyến đi là một quyển.</p>
 <div class="toolbar">
  <div class="seg" role="group" aria-label="Kiểu xếp"><button id="l1" class="on" data-ic="shelfUp">Xếp đứng</button><button id="l2" data-ic="shelfFlat">Xếp nằm</button></div>
  <div class="seg" role="group" aria-label="Thứ tự"><button id="m1" class="on" data-ic="palette">Theo màu</button><button id="m2" data-ic="clock">Mới nhất</button></div>
@@ -34,4 +39,5 @@
 <script src="shelf/shelf-db.js"></script>
 <script src="shelf/nooks.js"></script>
 <script src="shelf/shelf.js"></script>
+<script src="room/room.js"></script>
 <script src="core/start.js"></script></body></html>
