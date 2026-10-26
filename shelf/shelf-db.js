@@ -1,9 +1,4 @@
-// Lớp dữ liệu: toàn bộ giao tiếp với Supabase nằm ở file này.
-// Quyền thêm/sửa/xóa do luật RLS trên Supabase quyết định (xem supabase-bao-mat.sql), không phải do giao diện.
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-const BUCKET='photos';
-const photoUrl=p=>sb.storage.from(BUCKET).getPublicUrl(p).data.publicUrl;
-
+// Dữ liệu của kệ sách: bảng books, pages và ảnh trong kho 'photos'.
 const rowToPage=r=>({id:r.id,pos:r.position,l:r.layout,bg:r.bg,paths:r.photos||[],im:(r.photos||[]).map(photoUrl),t:r.caption||'',s:r.sticker||'',x:r.extra||null});
 function rowToBook(r,pages=[]){const ts=Date.parse(r.created_at);
  return{id:r.id,title:r.title,sub:r.sub||'',c:r.color,a:r.art,t:r.thickness,ts,seed:Math.floor(ts/1000)%1000,pages,private:!!r.private}}
@@ -18,8 +13,6 @@ async function dbAddBook({title,sub,c,a,t,priv}){
  const{data,error}=await sb.from('books').insert(row).select().single();
  if(error)throw error;return rowToBook(data)}
 
-// Xóa hoặc sửa bị luật RLS chặn thì Supabase không báo lỗi mà chỉ không đổi dòng nào, nên phải kiểm tra lại.
-const noRows=()=>new Error('Chỉ chủ kệ (đã đăng nhập) mới được thay đổi');
 async function dbDeleteBook(book){
  const{data,error}=await sb.from('books').delete().eq('id',book.id).select('id');if(error)throw error;if(!data||!data.length)throw noRows();
  const paths=book.pages.flatMap(p=>p.paths||[]);
@@ -41,9 +34,3 @@ async function dbSetPrivate(book,v){
  const{data,error}=await sb.from('books').update({private:v}).eq('id',book.id).select('id');
  if(error)throw /private/i.test(error.message||'')?new Error('Chưa có cột private. Hãy chạy đoạn SQL bảo mật trong Supabase'):error;if(!data||!data.length)throw noRows()}
 
-// ---------- Đăng nhập: chỉ một tài khoản (chủ kệ), tạo sẵn trong Supabase, đã tắt tự đăng ký ----------
-async function dbUser(){const{data}=await sb.auth.getSession();return(data&&data.session&&data.session.user)||null}
-async function dbSignIn(email,password){const{data,error}=await sb.auth.signInWithPassword({email,password});
- if(error)throw new Error(/invalid|credentials/i.test(error.message||'')?'Sai email hoặc mật khẩu':error.message);return data.user}
-async function dbSignOut(){const{error}=await sb.auth.signOut();if(error)throw error}
-const dbOnAuth=cb=>sb.auth.onAuthStateChange((ev,s)=>cb((s&&s.user)||null));

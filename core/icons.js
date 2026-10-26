@@ -31,10 +31,3 @@ const ICONS={
  bookOpen:'<path d="M3 5.5c3-1.3 6-1 9 1 3-2 6-2.3 9-1V19c-3-1.3-6-1-9 1-3-2-6-2.3-9-1z"/><path d="M12 6.5V20"/>'
 };
 const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICONS[n]||''}</svg>`;
-// Hình nhỏ cho ba kiểu trang, dùng trong bảng thêm trang.
-const LAYIC={
- scatter:'<svg viewBox="0 0 40 52" aria-hidden="true"><rect width="40" height="52" rx="2" fill="#fff"/><rect x="4" y="5" width="15" height="17" fill="#c9d9e6" transform="rotate(-6 11 13)"/><rect x="21" y="8" width="15" height="17" fill="#e8d2b8" transform="rotate(5 28 16)"/><rect x="11" y="28" width="16" height="18" fill="#cfe3cf" transform="rotate(-3 19 37)"/></svg>',
- hero:'<svg viewBox="0 0 40 52" aria-hidden="true"><rect width="40" height="52" rx="2" fill="#fff"/><rect x="4" y="4" width="32" height="33" fill="#c9d9e6" stroke="#fbfaf6" stroke-width="2" transform="rotate(-2 20 20)"/><rect x="9" y="42" width="22" height="2.5" rx="1" fill="#b9a78d"/></svg>',
- ticket:'<svg viewBox="0 0 40 52" aria-hidden="true"><rect width="40" height="52" rx="2" fill="#fff"/><g transform="rotate(-6 20 15)"><path d="M5 8h30v14H5z" fill="#e8c15a"/><circle cx="27" cy="8" r="2" fill="#fff"/><circle cx="27" cy="22" r="2" fill="#fff"/><path d="M27 10v10" stroke="#fff" stroke-dasharray="1.4 1.4"/></g><path d="M12 27h17v19l-1.7-1.6-1.7 1.6-1.7-1.6-1.7 1.6-1.7-1.6-1.7 1.6-1.7-1.6-1.7 1.6-1.7-1.6-1.7 1.6z" fill="#f2ece0" stroke="#d9cdb6" stroke-width=".6" transform="rotate(4 20 36)"/><path d="M15 31h11M15 34h8M15 37h10" stroke="#b9a78d" stroke-width="1" transform="rotate(4 20 36)"/></svg>',
- quote:'<svg viewBox="0 0 40 52" aria-hidden="true"><rect width="40" height="52" rx="2" fill="#fff"/><rect x="7" y="19" width="26" height="2.5" rx="1" fill="#b9a78d"/><rect x="9" y="25" width="22" height="2.5" rx="1" fill="#b9a78d"/><rect x="12" y="31" width="16" height="2.5" rx="1" fill="#b9a78d"/></svg>'
-};

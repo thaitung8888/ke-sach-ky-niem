@@ -10,7 +10,9 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Be+Vietnam+Pro:wght@400;500;600&family=Caveat:wght@600&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css"></head><body data-time="day">
+<link rel="stylesheet" href="core/base.css">
+<link rel="stylesheet" href="shelf/shelf.css"></head><body data-time="day">
+<section class="room" data-room="ke-sach">
 <header><h1>Kệ sách kỷ niệm</h1><p id="hint">Mỗi chuyến đi là một quyển.</p>
 <div class="toolbar">
  <div class="seg" role="group" aria-label="Kiểu xếp"><button id="l1" class="on" data-ic="shelfUp">Xếp đứng</button><button id="l2" data-ic="shelfFlat">Xếp nằm</button></div>
@@ -19,11 +21,17 @@
 </div></header>
 <main><div class="tower" id="tower"></div></main>
 <button class="addbook" id="addbook" data-ic="bookPlus">Làm quyển sách mới</button>
+</section>
+<footer id="foot"></footer>
 <div class="ov" id="ov"><button class="x" id="close" aria-label="Đóng" data-ic="x"></button><div id="slot" style="margin:auto"></div></div>
 <div class="dlg" id="dlg"></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
-<script src="db.js"></script>
-<script src="icons.js"></script>
-<script src="nooks.js"></script>
-<script src="app.js"></script></body></html>
+<script src="core/supabase.js"></script>
+<script src="core/icons.js"></script>
+<script src="core/ui.js"></script>
+<script src="core/router.js"></script>
+<script src="shelf/shelf-db.js"></script>
+<script src="shelf/nooks.js"></script>
+<script src="shelf/shelf.js"></script>
+<script src="core/start.js"></script></body></html>
