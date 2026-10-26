@@ -189,8 +189,8 @@ box-shadow:1px 1px 0 #f4f1ea,2px 2px 0 #d8d3c8,3px 3px 0 #f4f1ea,4px 4px 0 #d8d3
 .form.drop{box-shadow:0 0 0 2px #e8a33a,0 0 0 8px rgba(232,163,58,.15)}
 .panel label{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;opacity:.75;margin:12px 0 6px}
 .panel label:first-child{margin-top:0}
-.panel input[type=text],.panel textarea{width:100%;font:15px var(--sans);padding:9px 11px;border:1px solid #c9b998;border-radius:8px;background:#fff;color:#3b2d20}
-.panel input[type=text]:focus,.panel textarea:focus{outline:2px solid #e8a33a;outline-offset:1px;border-color:transparent}
+.panel input[type=text],.panel input[type=email],.panel input[type=password],.panel textarea{width:100%;font:15px var(--sans);padding:9px 11px;border:1px solid #c9b998;border-radius:8px;background:#fff;color:#3b2d20}
+.panel input[type=text]:focus,.panel input[type=email]:focus,.panel input[type=password]:focus,.panel textarea:focus{outline:2px solid #e8a33a;outline-offset:1px;border-color:transparent}
 .panel input.err{border-color:#c0392b}
 .panel textarea{height:72px;resize:none}
 .ph{font-size:12px;opacity:.65;margin:6px 0 0}
@@ -426,3 +426,19 @@ body[data-time=night] .cback{background:linear-gradient(180deg,rgba(0,0,0,.2),tr
 @keyframes foundf{0%,60%{translate:18px 0;box-shadow:0 0 0 3px #f2c46d,0 0 26px 6px rgba(242,196,109,.85)}100%{translate:0 0;box-shadow:none}}
 @media (max-width:520px){#v1 span,#v2 span{display:none}}
 @media (orientation:landscape) and (max-height:520px){#v1 span,#v2 span,#snd span{display:none}}
+
+/* ---------- chủ kệ / người xem ---------- */
+body:not(.admin) .adm,body:not(.admin) #addbook,body:not(.admin) .pdel{display:none!important}
+.lockbtn{display:flex;align-items:center;gap:6px;margin:-30px auto 40px;border:0;background:none;color:var(--ink);opacity:.35;cursor:pointer;font:500 12px var(--sans);padding:8px 10px;border-radius:99px;transition:opacity .2s,background .2s}
+.lockbtn:hover,.lockbtn:focus-visible{opacity:.85;background:rgba(0,0,0,.05)}
+.lockbtn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+body:not(.admin) .lockbtn{margin-top:30px}
+.lockbtn .ic{width:15px;height:15px}
+.lerr{min-height:18px;margin:10px 0 0;font-size:13px;color:#b03a2e}
+.chk{cursor:pointer;opacity:1!important;margin-top:14px!important;color:#5a4330}
+.chk input{width:16px;height:16px;margin:0;accent-color:#3b2d20;cursor:pointer}
+.chk .ic{width:14px;height:14px}
+#pvt{display:inline-flex;align-items:center;gap:6px}
+.spine .plock{position:absolute;top:3px;left:50%;translate:-50% 0;width:15px;height:15px;border-radius:50%;background:rgba(0,0,0,.35);color:#fff;display:flex;align-items:center;justify-content:center;z-index:4}
+.spine .plock .ic{width:9px;height:9px;stroke-width:2.4}
+.tower.flat .spine .plock{top:50%;left:22px;translate:0 -50%}

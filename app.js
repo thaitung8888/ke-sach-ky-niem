@@ -24,14 +24,14 @@ function art(k,c){const d=shade(c,-.28),m=shade(c,-.13),l=shade(c,.4),g='#7d8f4a
  `<circle cx="44" cy="44" r="22" fill="${s}"/><rect x="108" y="150" width="12" height="40" fill="${d}"/><path d="M114 24l38 50h-76z" fill="${d}"/><path d="M114 58l48 58H66z" fill="${m}"/><path d="M114 94l58 64H56z" fill="${d}"/><rect x="38" y="150" width="8" height="40" fill="${d}"/><path d="M42 96l26 36H16z" fill="${m}"/><path d="M42 118l32 38H10z" fill="${d}"/><path d="M0 190q50-14 100-4t100-8v22H0z" fill="${l}"/>`];
  return `<svg viewBox="0 0 200 200">${A[k]}</svg>`}
 
-let look='near',morphing=0,nook=true,layout='up',books=[],mode='color',cur=null,i=0,busy=0,faces=[],timePref='auto',pulled=null;
+let me=null,look='near',morphing=0,nook=true,layout='up',books=[],mode='color',cur=null,i=0,busy=0,faces=[],timePref='auto',pulled=null;
 const hs=s=>{let h=7;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return h};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 
 // ---------- thông báo và hộp xác nhận (thay cho alert/confirm của trình duyệt) ----------
 function toast(msg,bad){const t=$('toast');t.innerHTML=ic(bad?'x':'check')+`<span>${esc(msg)}</span>`;t.className='toast on'+(bad?' bad':'');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),bad?4200:2400)}
-const fail=e=>{console.error(e);toast('Chưa lưu được: '+(e.message||e)+'. Kiểm tra mạng rồi thử lại.',1)};
+const fail=e=>{console.error(e);const m=e.message||String(e);toast(/row-level security|permission denied|chủ kệ/i.test(m)?'Chỉ chủ kệ (đã đăng nhập) mới được thay đổi':'Chưa lưu được: '+m+'. Kiểm tra mạng rồi thử lại.',1)};
 function ask(msg,yes='Xóa'){return new Promise(r=>{const d=$('dlg');
  d.innerHTML=`<div class="dbox" role="alertdialog" aria-modal="true" aria-labelledby="dmsg"><p id="dmsg">${esc(msg)}</p><div class="bar"><button class="btn" id="dn">Giữ lại</button><button class="btn danger" id="dy">${ic('trash')}${esc(yes)}</button></div></div>`;
  d.classList.add('on');const done=v=>{d.classList.remove('on');d.innerHTML='';r(v)};
@@ -110,7 +110,7 @@ const bh=b=>190+(b.seed*13%46);
 function mkSpine(b){const e=document.createElement('button'),lt=lum(b.c)>.62,h=bh(b);
  e.className='spine s'+(hs(b.id+b.title)%4);
  e.style.cssText=`--t:${b.t}px;--h:${h}px;--fs:${Math.min(24,Math.max(9,(h-100)/(b.title.length*.95))).toFixed(1)}px;--ff:${Math.min(30,b.t*.46).toFixed(1)}px;--bd:${shade(b.c,-.32)};--bl:${shade(b.c,.4)};background-color:${b.c};color:${lt?shade(b.c,-.5):'#fff'}`;
- e.innerHTML=`<span class="tt">${esc(b.title)}</span><small>${esc(b.sub||'')}</small>`;
+ e.innerHTML=`<span class="tt">${esc(b.title)}</span><small>${esc(b.sub||'')}</small>${b.private?`<i class="plock" title="Riêng tư: chỉ bạn thấy">${ic('lock')}</i>`:''}`;
  e.title=`${b.title} · ${stats(b)}`;e.setAttribute('aria-label',`Mở sách ${b.title}, ${stats(b)}`);
  const du=dustOf(b);if(du>.02){e.classList.add('dusty');e.style.setProperty('--dust',du.toFixed(2));e.insertAdjacentHTML('beforeend','<i class="dust" aria-hidden="true"></i>')}
  e.dataset.id=b.id;e.onclick=()=>pull(e,b.id);return e}
@@ -120,7 +120,7 @@ function tower(){
  const L=[...books].sort((a,b)=>mode==='color'?hue(a.c)-hue(b.c):b.ts-a.ts),t=$('tower');t.innerHTML='';
  t.className='tower '+(layout==='flat'?'flat':'up');t.hidden=look==='far';$('far').hidden=look!=='far';
  $('hint').textContent=layout==='flat'?'Chạm một quyển để rút nó ra khỏi chồng sách':'Chạm một quyển để rút ra đọc. Rê chuột qua hộp nook để nhìn sâu vào trong, bấm công tắc để tắt đèn';
- if(!books.length){t.innerHTML=`<div class="empty">${ic('bookOpen')}<p>Kệ còn trống. Bấm “Làm quyển sách mới” để xếp quyển đầu tiên.</p></div>`;return}
+ if(!books.length){t.innerHTML=`<div class="empty">${ic('bookOpen')}<p>${me?'Kệ còn trống. Bấm “Làm quyển sách mới” để xếp quyển đầu tiên.':'Kệ sách đang trống.'}</p></div>`;return}
  layout==='flat'?flatScene(t,L):upScene(t,L);
  if(look==='far'){renderFar(L);$('hint').textContent=farHint()}req();
 }
@@ -272,7 +272,8 @@ function openBook(id){
  show(`<div class="wrap ${single()?'one':''}" style="--cc:${cur.c}"><div class="bookbox" id="bb"><div class="spread" id="sp"></div>
  <div class="cover" id="cv"><div class="cf" style="background:${cur.c};color:${tc}"><h2 style="font-size:${fs}cqw">${esc(cur.title)}</h2>${art(cur.a,cur.c)}<small>${esc(cur.sub||'')}</small></div><div class="cb"></div></div></div>
  <p class="tap" id="tap">${ic('bookOpen')}Chạm vào bìa để mở · ${stats(cur)}</p>
- <div class="bar" id="bar" style="opacity:0;pointer-events:none"><button class="btn" id="pv"></button><button class="btn" id="nx">Sau${ic('chevR')}</button><button class="btn pri" id="ad">${ic('imagePlus')}Thêm trang</button><button class="btn ghost" id="dl">${ic('trash')}Xóa sách</button></div></div>`);
+ <div class="bar" id="bar" style="opacity:0;pointer-events:none"><button class="btn" id="pv"></button><button class="btn" id="nx">Sau${ic('chevR')}</button><button class="btn pri adm" id="ad">${ic('imagePlus')}Thêm trang</button><button class="btn adm" id="pvt"></button><button class="btn ghost adm" id="dl">${ic('trash')}Xóa sách</button></div></div>`);
+ drawPriv();
  paint();dragFlip($('sp'));
  $('cv').onclick=openCover;
  $('sp').addEventListener('click',async e=>{const b=e.target.closest('.pdel');if(!b||busy)return;const k=+b.dataset.i,pg=cur.pages[k];if(!pg||!await ask('Xóa trang này? Ảnh của trang cũng bị xóa khỏi kho.','Xóa trang'))return;
@@ -280,6 +281,9 @@ function openBook(id){
  $('pv').onclick=()=>i<=0?closeCover():flip(-1);$('nx').onclick=()=>flip(1);$('ad').onclick=addPage;
  $('dl').onclick=async()=>{if(!await ask(`Xóa quyển “${cur.title}” cùng ${stats(cur)}?`,'Xóa sách'))return;try{await dbDeleteBook(cur);books=books.filter(b=>b!==cur);cur=null;hide();tower();toast('Đã xóa sách')}catch(e){fail(e)}};
 }
+// Nút riêng tư trong sách đang mở (chỉ chủ kệ thấy).
+function drawPriv(){const b=$('pvt');if(!b||!cur)return;b.innerHTML=ic(cur.private?'lock':'unlock')+(cur.private?'Riêng tư':'Công khai');b.title=cur.private?'Chỉ bạn thấy quyển này. Bấm để công khai':'Ai cũng xem được. Bấm để chuyển sang riêng tư';b.setAttribute('aria-pressed',String(cur.private));
+ b.onclick=async()=>{const v=!cur.private;b.disabled=true;try{await dbSetPrivate(cur,v);cur.private=v;drawPriv();tower();toast(v?'Đã chuyển sang riêng tư: chỉ bạn thấy':'Đã công khai quyển này')}catch(e){fail(e)}b.disabled=false}}
 function openCover(){const bb=$('bb');SFX.play('open');
  if(!store.get('ksk3hint')&&cur&&faces.length>2){store.set('ksk3hint','1');setTimeout(()=>toast('Mẹo: kéo trang sang trái hoặc phải để lật'),1100)}bb.classList.add('opened');$('tap').style.opacity=0;$('bar').style.opacity=1;$('bar').style.pointerEvents='auto';
  setTimeout(()=>{if(bb.classList.contains('opened'))bb.classList.add('gone')},1000)}
@@ -356,7 +360,8 @@ function newBook(){
  <label for="ns">Thời gian</label><input type="text" id="ns" placeholder="7 / 2026" maxlength="14" autocomplete="off">
  <label>Màu bìa</label><div class="chips sw" id="cc"></div>
  <label class="cpick" for="cu">${ic('palette')}<span>Chọn màu riêng</span><input type="color" id="cu" value="#c4a484"></label>
- <label>Hình trên bìa</label><div class="chips art" id="aa"></div></div></div>
+ <label>Hình trên bìa</label><div class="chips art" id="aa"></div>
+ <label class="chk" for="npv"><input type="checkbox" id="npv">${ic('lock')}<span>Riêng tư: chỉ mình tôi xem</span></label></div></div>
  <div class="bar"><button class="btn" id="no">Hủy</button><button class="btn pri" id="ok">${ic('check')}Xếp lên kệ</button></div></div>`);
  let col=COL[0],custom=false;
  const upd=()=>{$('b3').innerHTML=book3d(col,+$('aa').dataset.v,$('nt').value.trim(),$('ns').value.trim())};
@@ -367,7 +372,7 @@ function newBook(){
  $('no').onclick=hide;
  $('ok').onclick=async()=>{const t=$('nt').value.trim();if(!t){$('nt').focus();$('nt').classList.add('err');toast('Cần đặt tên cho quyển sách',1);return}
   const bt=$('ok');bt.disabled=true;
-  try{books.push(await dbAddBook({title:t,sub:$('ns').value.trim(),c:col,a:+$('aa').dataset.v,t:34+Math.round(Math.random()*32)}));hide();tower();toast(`Đã xếp “${t}” lên kệ`)}catch(e){fail(e);bt.disabled=false}};
+  try{books.push(await dbAddBook({title:t,sub:$('ns').value.trim(),c:col,a:+$('aa').dataset.v,t:34+Math.round(Math.random()*32),priv:$('npv').checked}));hide();tower();toast(`Đã xếp “${t}” lên kệ`)}catch(e){fail(e);bt.disabled=false}};
 }
 let heicP;const loadHeic=()=>heicP||(heicP=new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js';s.onload=ok;s.onerror=()=>{heicP=null;no(new Error('Không tải được bộ chuyển ảnh HEIC (cần mạng)'))};document.head.append(s)}));
 async function shrink(file,max=600){
@@ -429,8 +434,27 @@ const canLock=()=>!!(screen.orientation&&screen.orientation.lock&&document.docum
  if($('rgo'))$('rgo').onclick=async()=>{try{await document.documentElement.requestFullscreen({navigationUI:'hide'});await screen.orientation.lock('landscape')}
   catch(e){try{if(document.fullscreenElement)await document.exitFullscreen()}catch(_){}toast('Máy này không cho web tự xoay. Hãy tắt khóa xoay màn hình rồi xoay ngang điện thoại.',1)}}}
 
+// ---------- Đăng nhập chủ kệ ----------
+// Người xem không cần đăng nhập. Nút ổ khóa nhỏ cuối trang là lối vào duy nhất; quyền thật nằm ở luật RLS trên Supabase.
+async function reload(){try{books=await dbLoadBooks()}catch(e){fail(e)}if(cur)hide();tower()}
+function drawAdmin(){document.body.classList.toggle('admin',!!me);const b=$('lk');
+ b.innerHTML=me?ic('logout')+'<span>Đăng xuất</span>':ic('lock');b.title=me?'Đăng xuất ('+(me.email||'chủ kệ')+')':'Đăng nhập chủ kệ';b.setAttribute('aria-label',b.title)}
+function login(){show(`<div class="panel"><div class="phead">${ic('lock')}<h3>Đăng nhập chủ kệ</h3></div>
+ <form class="form" id="lf" novalidate><label for="le">Email</label><input type="email" id="le" autocomplete="username" required>
+ <label for="lp">Mật khẩu</label><input type="password" id="lp" autocomplete="current-password" required>
+ <p class="lerr" id="lerr" role="alert"></p>
+ <div class="bar"><button type="button" class="btn" id="no">Hủy</button><button type="submit" class="btn pri" id="ok">${ic('check')}Đăng nhập</button></div></form></div>`);
+ setTimeout(()=>$('le').focus(),50);$('no').onclick=hide;
+ $('lf').onsubmit=async e=>{e.preventDefault();const em=$('le').value.trim(),pw=$('lp').value;if(!em||!pw){$('lerr').textContent='Nhập email và mật khẩu';return}
+  const bt=$('ok');bt.disabled=true;$('lerr').textContent='';
+  try{me=await dbSignIn(em,pw);drawAdmin();hide();await reload();toast('Chào chủ kệ! Bạn đã có thể thêm và sửa sách')}catch(err){$('lerr').textContent=err.message||'Không đăng nhập được';bt.disabled=false}}}
+{const b=document.createElement('button');b.id='lk';b.type='button';b.className='lockbtn';$('addbook').after(b);
+ b.onclick=async()=>{if(!me)return login();try{await dbSignOut();me=null;drawAdmin();await reload();toast('Đã đăng xuất')}catch(e){fail(e)}}}
+dbOnAuth(u=>{const was=!!me;me=u;drawAdmin();if(was!==!!u&&books.length)reload()});
+
 // ---------- khởi động ----------
 document.querySelectorAll('[data-ic]').forEach(b=>b.insertAdjacentHTML('afterbegin',ic(b.dataset.ic)));
 look=store.get('ksk3view')==='far'?'far':'near';drawView();layout=store.get('ksk3layout')||'up';nook=store.get('ksk3nook')!=='0';timePref=store.get('ksk3time')||'auto';if(!TIMES.includes(timePref))timePref='auto';
 $('l3').classList.toggle('on',nook);$('l3').setAttribute('aria-pressed',nook);applyTime();
-(async()=>{$('tower').innerHTML='<p class="empty">Đang tải kệ sách...</p>';try{books=await dbLoadBooks()}catch(e){fail(e)}setLayout(layout)})();
+drawAdmin();
+(async()=>{$('tower').innerHTML='<p class="empty">Đang tải kệ sách...</p>';try{me=await dbUser();drawAdmin()}catch(e){}try{books=await dbLoadBooks()}catch(e){fail(e)}setLayout(layout)})();
