@@ -7,6 +7,11 @@ body.lights-off[data-time=night]{--rdark:.84}
 .back{position:absolute;left:max(14px,env(safe-area-inset-left,0px));top:calc(14px + env(safe-area-inset-top,0px));display:inline-flex;align-items:center;gap:4px;padding:7px 13px 7px 9px;border-radius:99px;border:1.5px solid var(--ink);color:var(--ink);text-decoration:none;font:500 13px var(--sans);z-index:5;transition:background .2s,color .2s}
 .back:hover,.back:focus-visible{background:var(--ink);color:var(--onink);outline:none}
 [data-room=ke-sach] header{position:relative}
+/* điện thoại: nút về phòng thành một hàng riêng phía trên tiêu đề, không đè lên chữ */
+@media (max-width:640px){
+ .room>header:has(>.back){padding-top:12px}
+ .back{position:static;display:flex;width:max-content;margin:0 0 14px}}
+@media (orientation:landscape) and (max-height:520px){.back{position:static;margin:0;padding:5px 11px 5px 7px;font-size:12px}}
 .rhead{text-align:center;padding:22px 16px 6px}
 .rhead p{margin:8px auto 0;opacity:.7;font-size:14px}
 .scene{position:relative;width:min(calc(100vw - 24px),calc((100svh - 150px)*1.7778),1500px);aspect-ratio:16/9;margin:12px auto 26px;border-radius:16px;overflow:hidden;
