@@ -3,20 +3,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kệ sách kỷ niệm</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#efe6d6">
+<meta name="theme-color" content="#100f1a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Kệ sách">
 <link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="icon" type="image/png" href="icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Be+Vietnam+Pro:wght@400;500;600&family=Caveat:wght@600&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Be+Vietnam+Pro:wght@400;500;600;700&family=Caveat:wght@600&family=IBM+Plex+Mono:wght@500&family=Montserrat:wght@700;800;900&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="core/base.css">
 <link rel="stylesheet" href="shelf/shelf.css">
 <link rel="stylesheet" href="room/room.css">
 <link rel="stylesheet" href="wardrobe/wardrobe.css">
-<link rel="stylesheet" href="habit/habit.css"></head><body data-time="day">
+<link rel="stylesheet" href="habit/habit.css"></head><body data-time="night">
 <section class="room" data-room="phong" hidden>
-<header class="rhead"><h1 id="rname">Căn phòng</h1><p>Bấm vào một món đồ để bước vào.</p></header>
+<header class="rhead"><i class="rlogo" data-logo></i><div><h1 id="rname">Căn phòng</h1><p>Bấm vào một món đồ để bước vào.</p></div></header>
 <div class="scene" id="scene"></div>
 </section>
 <section class="room" data-room="ke-sach" hidden>
@@ -24,7 +25,7 @@
 <div class="toolbar">
  <div class="seg" role="group" aria-label="Kiểu xếp"><button id="l1" class="on" data-ic="shelfUp">Xếp đứng</button><button id="l2" data-ic="shelfFlat">Xếp nằm</button></div>
  <div class="seg" role="group" aria-label="Thứ tự"><button id="m1" class="on" data-ic="palette">Theo màu</button><button id="m2" data-ic="clock">Mới nhất</button></div>
- <div class="seg" role="group" aria-label="Trang trí"><button id="l3" class="on" data-ic="sparkle">Book nook</button><button id="tm"></button></div>
+ <div class="seg" role="group" aria-label="Trang trí"><button id="l3" class="on" data-ic="sparkle">Book nook</button></div>
 </div></header>
 <main><div class="tower" id="tower"></div></main>
 <button class="addbook" id="addbook" data-ic="bookPlus">Làm quyển sách mới</button>
@@ -45,6 +46,7 @@
 <script src="config.js"></script>
 <script src="core/supabase.js"></script>
 <script src="core/icons.js"></script>
+<script src="core/logo.js"></script>
 <script src="core/ui.js"></script>
 <script src="core/router.js"></script>
 <script src="shelf/shelf-db.js"></script>
@@ -54,5 +56,6 @@
 <script src="wardrobe/wardrobe.js"></script>
 <script src="habit/habit-db.js"></script>
 <script src="habit/habit.js"></script>
+<script src="room/room3d.js"></script>
 <script src="room/room.js"></script>
 <script src="core/start.js"></script></body></html>

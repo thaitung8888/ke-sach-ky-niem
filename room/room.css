@@ -79,3 +79,14 @@ body.lights-off .emlamp,body.lights-off .emrib{opacity:.06}
 .emcone{fill:url(#gCone);mix-blend-mode:screen;opacity:calc(var(--glow)*.7)}
 .embulb{fill:#ffe9bf;opacity:var(--glow)}
 .embeam{fill:url(#gCone);mix-blend-mode:screen;opacity:calc(var(--glow)*.2)}
+/* logo tròn 15 Xóm Lẻ cạnh tên phòng */
+.rhead:has(.rlogo){display:flex;align-items:center;justify-content:center;gap:14px;text-align:left}
+.rlogo{width:58px;height:58px;flex:none;border-radius:50%;box-shadow:0 6px 16px -6px rgba(0,0,0,.5)}.rlogo img{display:block;width:100%;height:100%}
+@media (orientation:landscape) and (max-height:520px){.rlogo{width:34px;height:34px}}
+/* căn phòng 3D (room3d.js) */
+.scene.s3d{background:#0f0e18;box-shadow:0 40px 70px -30px rgba(0,0,0,.7),0 0 0 1px rgba(154,140,255,.18)}
+.r3{position:absolute;inset:0}
+.r3 canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:pan-y}
+.r3keys button{position:absolute;width:1px;height:1px;padding:0;border:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.scene.r3wait::after{content:"Đang dựng căn phòng 3D…";position:absolute;left:50%;bottom:14px;translate:-50% 0;padding:6px 14px;border-radius:99px;background:rgba(28,22,64,.85);color:#f7f1e6;font:500 12px var(--sans);pointer-events:none}
+@media (max-width:640px) and (orientation:portrait){.scene.s3d{aspect-ratio:4/5;width:calc(100vw - 24px)}}

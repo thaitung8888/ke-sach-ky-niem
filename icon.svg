@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="logo" viewBox="0 0 1024 1024" role="img" aria-label="Logo Căn phòng của Thái">
+ <circle cx="512" cy="512" r="508" fill="#3b2ca6"/>
+ <g fill="none" stroke="#ffc700"><circle cx="512" cy="512" r="496" stroke-width="14"/><circle cx="512" cy="512" r="426" stroke-width="5"/></g>
+ <path id="lgr1" d="M512 51a461 461 0 1 1-.01 0" fill="none"/>
+ <text fill="#ffc700" font-family="Montserrat,'Be Vietnam Pro',sans-serif" font-weight="800" font-size="44" dominant-baseline="central"><textPath href="#lgr1" textLength="2883" lengthAdjust="spacing">SÁCH · ÁO · KỶ NIỆM · CĂN PHÒNG CỦA THÁI · SÁCH · ÁO · KỶ NIỆM · CĂN PHÒNG CỦA THÁI · </textPath></text>
+ <g fill="#ffc700"><path d="M332 302Q422 280 452 232H572Q602 280 692 302L662 316H362z"/><rect x="362" y="328" width="300" height="16"/><rect x="380" y="344" width="22" height="34"/><rect x="622" y="344" width="22" height="34"/>
+  <rect x="322" y="646" width="150" height="6"/><rect x="552" y="646" width="150" height="6"/><circle cx="512" cy="649" r="9"/></g>
+ <g fill="#f7f1e6" font-family="Montserrat,'Be Vietnam Pro',sans-serif" font-weight="900" text-anchor="middle"><text x="512" y="612" font-size="330">T</text>
+  <text x="512" y="790" font-size="92" textLength="560" lengthAdjust="spacingAndGlyphs">CĂN PHÒNG</text></g></svg>

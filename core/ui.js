@@ -6,7 +6,7 @@ const shade=(h,a)=>'#'+rgb(h).map(v=>Math.round(a>0?v+(255-v)*a:v*(1+a)).toStrin
 const lum=h=>{const[r,g,b]=rgb(h);return(.299*r+.587*g+.114*b)/255};
 const hue=h=>{let[r,g,b]=rgb(h).map(v=>v/255);const m=Math.max(r,g,b),n=Math.min(r,g,b),d=m-n;if(d<.08)return 400+(1-lum(h))*100;let x=m===r?((g-b)/d)%6:m===g?(b-r)/d+2:(r-g)/d+4;return((x*60)+360+30)%360};
 const RM=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
-let me=null,timePref='auto',booted=false;
+let me=null,booted=false;
 // Các khu vực đăng ký việc cần làm khi đóng lớp phủ hoặc khi đăng nhập / đăng xuất.
 const hooks={hide:[],auth:[],books:[]};
 const authChanged=()=>Promise.all(hooks.auth.map(f=>f()));
@@ -22,14 +22,8 @@ function ask(msg,yes='Xóa'){return new Promise(r=>{const d=$('dlg');
  d.classList.add('on');const done=v=>{d.classList.remove('on');d.innerHTML='';r(v)};
  $('dn').onclick=()=>done(false);$('dy').onclick=()=>done(true);d.onclick=e=>{if(e.target===d)done(false)};$('dn').focus()})}
 
-// ---------- ánh sáng theo giờ ----------
-const TIMES=['auto','day','dusk','night'],TN={auto:'Theo giờ thật',day:'Ban ngày',dusk:'Hoàng hôn',night:'Ban đêm'},TI={day:'sun',dusk:'sunset',night:'moon'};
-function phaseNow(){const d=new Date(),h=d.getHours()+d.getMinutes()/60;return h>=6.5&&h<16.5?'day':(h>=16.5&&h<19)||(h>=5&&h<6.5)?'dusk':'night'}
-function applyTime(){const p=timePref==='auto'?phaseNow():timePref;document.body.dataset.time=p;
- $('tm').innerHTML=ic(timePref==='auto'?'auto':TI[p])+`<span>${timePref==='auto'?'Theo giờ · '+TN[p].toLowerCase():TN[p]}</span>`;
- $('tm').title='Đổi ánh sáng: '+TN[timePref]}
-$('tm').onclick=()=>{timePref=TIMES[(TIMES.indexOf(timePref)+1)%TIMES.length];store.set('ksk3time',timePref);applyTime()};
-setInterval(()=>{if(timePref==='auto')applyTime()},60000);
+// ---------- ánh sáng: luôn là đêm tím · vàng theo bảng màu 15 Xóm Lẻ (CSS vẫn đọc body[data-time]) ----------
+function applyTime(){document.body.dataset.time='night'}
 
 // ---------- Âm thanh: tạo bằng Web Audio, không cần file âm thanh ----------
 const SFX=(()=>{let ctx=null,on=store.get('ksk3snd')!=='0';
@@ -47,7 +41,7 @@ const SFX=(()=>{let ctx=null,on=store.get('ksk3snd')!=='0';
   click:()=>{const c=ac();if(!c)return;const t=c.currentTime,o=c.createOscillator(),g=c.createGain();o.type='square';o.frequency.value=1700;env(g,t,.002,.05,.03);o.connect(g).connect(c.destination);o.start(t);o.stop(t+.04);setTimeout(()=>thump(170,.14,.05),35)},
   puff:()=>swish(.7,280,900,.13,.5),tick:()=>swish(.2,1400,2800,.1,.9)};
  return{play:n=>{if(on&&P[n])try{P[n]()}catch(e){}},get on(){return on},set on(v){on=v;store.set('ksk3snd',v?'1':'0')}}})();
-const sndBtn=document.createElement('button');sndBtn.id='snd';sndBtn.type='button';$('tm').after(sndBtn);
+const sndBtn=document.createElement('button');sndBtn.id='snd';sndBtn.type='button';$('l3').after(sndBtn);
 const drawSnd=()=>{sndBtn.innerHTML=ic(SFX.on?'vol':'volX')+'<span>Âm thanh</span>';sndBtn.classList.toggle('on',SFX.on);sndBtn.setAttribute('aria-pressed',String(SFX.on));sndBtn.title=SFX.on?'Tắt âm thanh':'Bật âm thanh';sndBtn.setAttribute('aria-label',sndBtn.title)};
 drawSnd();sndBtn.onclick=()=>{SFX.on=!SFX.on;drawSnd();SFX.play('click')};
 

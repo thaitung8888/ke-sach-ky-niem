@@ -1,20 +1,20 @@
-/* Giao diện LỊCH LUYỆN TẬP: thẻ giấy kem, xanh xô thơm (sage) 5 mức như bảng commit GitHub. */
-:root{--lv0:#e9e4d9;--lv1:#d3dec8;--lv2:#a8c098;--lv3:#7b9c6b;--lv4:#52774a;--lvrest:#ecd9b0;--sage:#6f9461}
+/* Giao diện LỊCH LUYỆN TẬP: thẻ giấy ngà, thang tím 5 mức như bảng commit GitHub (bảng màu 15 Xóm Lẻ), ngày nghỉ màu vàng. */
+:root{--lv0:#e6e1ee;--lv1:#cbc3f3;--lv2:#9a8cff;--lv3:#6a5bd8;--lv4:#3b2ca6;--lvrest:#ffe08a;--sage:#3b2ca6}
 [data-room=lich-tap] header{position:relative}
 .hwrap{width:min(1180px,calc(100vw - 24px));margin:18px auto 30px}
 .hgrid{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:18px;align-items:start}
-.hcard{background:#faf6ee;color:#3b2d20;border-radius:16px;padding:18px;box-shadow:0 24px 50px -30px rgba(40,28,18,.45),0 0 0 1px rgba(0,0,0,.05)}
+.hcard{background:#f7f1e6;color:#1c1640;border-radius:16px;padding:18px;box-shadow:0 24px 50px -30px rgba(40,28,18,.45),0 0 0 1px rgba(0,0,0,.05)}
 .hcard h3{font:600 12px var(--sans);letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin:20px 0 10px}
 /* ngày + vòng tròn */
 .hday{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.hday>div{text-align:center}.hday b{display:block;font:400 22px/1.1 var(--disp);text-transform:uppercase;letter-spacing:.03em}.hday small{font-size:12.5px;opacity:.65}
+.hday>div{text-align:center}.hday b{display:block;font:900 22px/1.1 var(--head);text-transform:uppercase;letter-spacing:-.005em}.hday small{font-size:12.5px;opacity:.65}
 .hday button{all:unset;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#efe6d6}
-.hday button:hover{background:#e6d9c2}.hday button:disabled{opacity:.3;cursor:default}.hday button:focus-visible{outline:2px solid #e8a33a}
+.hday button:hover{background:#e6d9c2}.hday button:disabled{opacity:.3;cursor:default}.hday button:focus-visible{outline:2px solid #ffc700}
 .hring{display:flex;justify-content:center;margin:12px 0 6px}
 .ring{width:132px;height:132px}
 .rtrack{fill:none;stroke:var(--lv0);stroke-width:9}
 .rfill{fill:none;stroke:var(--sage);stroke-width:9;stroke-linecap:round;transition:stroke-dasharray .5s cubic-bezier(.3,.7,.3,1)}
-.rbig{font:400 24px var(--disp);fill:#3b2d20}.rsmall{font:500 9.5px var(--sans);fill:#8a7a62}
+.rbig{font:900 24px var(--head);fill:#1c1640}.rsmall{font:500 9.5px var(--sans);fill:#8a7a62}
 .hring.full .ring{animation:rpop .6s cubic-bezier(.3,1.6,.5,1)}.hring.full .rfill{stroke:var(--lv4)}
 @keyframes rpop{40%{transform:scale(1.08)}}
 .hrestmsg{text-align:center;font-size:13px;margin:0 0 8px;color:#8a6a2f}
@@ -22,12 +22,12 @@
 .hlist{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:7px}
 .hlist.resting{opacity:.5}
 .hrow{position:relative;display:flex;align-items:center;gap:10px;padding:9px 10px 11px;border-radius:12px;background:#fff;box-shadow:0 0 0 1px #ece3d3;overflow:hidden;transition:background .25s}
-.hrow.done{background:#eef3e9;box-shadow:0 0 0 1px #d3dec8}
+.hrow.done{background:#efecf8;box-shadow:0 0 0 1px #d9d3f3}
 .hic{font-size:22px;width:30px;text-align:center;flex:none}
-.hnm{all:unset;flex:1;min-width:0;cursor:pointer;border-radius:6px}.hnm:disabled{cursor:default}.hnm:focus-visible{outline:2px solid #e8a33a}
+.hnm{all:unset;flex:1;min-width:0;cursor:pointer;border-radius:6px}.hnm:disabled{cursor:default}.hnm:focus-visible{outline:2px solid #ffc700}
 .hnm b{display:flex;align-items:center;gap:4px;font:600 14px var(--sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hnm small{display:block;font-size:11.5px;opacity:.6;margin-top:1px}
-.hrow.done .hnm b{color:#3f5f37}
+.hrow.done .hnm b{color:#3b2ca6}
 .hrow.locked .hnm b{opacity:.55;font-style:italic;font-weight:500}
 .hpv .ic{width:12px;height:12px;opacity:.5}
 .hbar{position:absolute;left:0;bottom:0;height:3px;width:calc(var(--f)*100%);background:var(--sage);transition:width .4s}
@@ -35,11 +35,11 @@
 .hchk svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0;transform:scale(.6);transition:opacity .2s,transform .25s cubic-bezier(.3,1.6,.5,1)}
 .hchk:hover:not(:disabled){border-color:var(--sage)}.hchk:active:not(:disabled){transform:scale(.9)}
 .hchk[aria-pressed=true]{background:var(--sage);border-color:var(--sage)}.hchk[aria-pressed=true] svg{opacity:1;transform:none}
-.hchk:disabled{cursor:default}.hchk:focus-visible{outline:2px solid #e8a33a;outline-offset:2px}
+.hchk:disabled{cursor:default}.hchk:focus-visible{outline:2px solid #ffc700;outline-offset:2px}
 .hcnt{display:flex;align-items:center;gap:6px;flex:none;font-size:13px}
 .hcnt span{min-width:58px;text-align:center;font-variant-numeric:tabular-nums}.hcnt b{font-size:15px}
 .hcnt button{all:unset;width:28px;height:28px;border-radius:50%;background:#efe6d6;display:flex;align-items:center;justify-content:center;font:600 17px var(--sans);cursor:pointer}
-.hcnt button:hover:not(:disabled){background:#d3dec8}.hcnt button:disabled{opacity:.35;cursor:default}.hcnt button:focus-visible{outline:2px solid #e8a33a}
+.hcnt button:hover:not(:disabled){background:#d9d3f3}.hcnt button:disabled{opacity:.35;cursor:default}.hcnt button:focus-visible{outline:2px solid #ffc700}
 .hempty{font-size:13px;opacity:.6;text-align:center;padding:14px}
 .hoff{font-size:12px;opacity:.6;margin:10px 2px 0}
 .hact{display:flex;gap:8px;justify-content:space-between;margin-top:14px;flex-wrap:wrap}
@@ -47,7 +47,7 @@
 /* chỉ số */
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .kpis div{background:#fff;border-radius:12px;padding:12px;box-shadow:0 0 0 1px #ece3d3}
-.kpis b{display:block;font:400 26px/1.1 var(--disp);color:#3b2d20}.kpis small{font-size:11.5px;opacity:.6}
+.kpis b{display:block;font:900 26px/1.1 var(--head);color:#1c1640}.kpis small{font-size:11.5px;opacity:.6}
 /* bảng ô vuông */
 .heatwrap{--c:12px;display:grid;grid-template-columns:24px auto;grid-template-rows:auto auto;overflow-x:auto;padding-bottom:4px}
 .hmonths{grid-column:2;display:grid;grid-template-columns:repeat(53,var(--c));column-gap:3px;font-size:10.5px;opacity:.6;height:16px}
@@ -58,8 +58,8 @@
 .heat i[data-d]{cursor:default}.heat i.fut{background:none;box-shadow:inset 0 0 0 1px #efe7da}
 .lv1{background:var(--lv1)!important}.lv2{background:var(--lv2)!important}.lv3{background:var(--lv3)!important}.lv4{background:var(--lv4)!important}
 i.rest{background:repeating-linear-gradient(135deg,var(--lvrest) 0 3px,#f5e8cc 3px 6px)!important}
-.heat i.today{box-shadow:0 0 0 1.5px #3b2d20}
-.heat i:hover{outline:1.5px solid #3b2d20;outline-offset:1px}
+.heat i.today{box-shadow:0 0 0 1.5px #1c1640}
+.heat i:hover{outline:1.5px solid #1c1640;outline-offset:1px}
 .hlegend{display:flex;align-items:center;gap:4px;justify-content:flex-end;font-size:11px;opacity:.75;margin-top:8px}
 .hlegend span:nth-of-type(2){margin-right:10px}
 /* từng thói quen + theo thứ */
@@ -78,11 +78,11 @@ i.rest{background:repeating-linear-gradient(135deg,var(--lvrest) 0 3px,#f5e8cc 3
 /* bảng sửa thói quen */
 .chips.hico button{width:38px;height:38px;border-radius:10px}.chips.hico .em{font-size:19px}
 .chips.hkind button{padding:7px 12px}
-.hrowf{display:flex;gap:8px}.hrowf input[type=number]{width:90px;font:15px var(--sans);padding:9px 11px;border:1px solid #c9b998;border-radius:8px;background:#fff;color:#3b2d20}
+.hrowf{display:flex;gap:8px}.hrowf input[type=number]{width:90px;font:15px var(--sans);padding:9px 11px;border:1px solid #c9b998;border-radius:8px;background:#fff;color:#1c1640}
 .htgt[hidden]{display:none}
 .hdays7{display:flex;gap:6px;flex-wrap:wrap}
 .hdays7 button{all:unset;width:38px;height:34px;border-radius:9px;text-align:center;font:600 12px/34px var(--sans);background:#efe4cc;color:#7a6a4f;cursor:pointer}
-.hdays7 button.on{background:var(--sage);color:#fff}.hdays7 button:focus-visible{outline:2px solid #e8a33a}
+.hdays7 button.on{background:var(--sage);color:#fff}.hdays7 button:focus-visible{outline:2px solid #ffc700}
 .btn.hstop{color:#b03a2e;box-shadow:inset 0 0 0 1.5px rgba(176,58,46,.4);margin-right:auto}.btn.hstop:hover{background:#b03a2e;color:#fff}
 @media (max-width:860px){.hgrid{grid-template-columns:minmax(0,1fr)}.hsplit{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:560px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}

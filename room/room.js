@@ -41,9 +41,10 @@ function shell(){
   <linearGradient id="aoV2" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#5a4330" stop-opacity=".16"/><stop offset="1" stop-color="#5a4330" stop-opacity="0"/></linearGradient>
   <linearGradient id="aoH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a4330" stop-opacity=".13"/><stop offset="1" stop-color="#5a4330" stop-opacity="0"/></linearGradient>
   <linearGradient id="gBeam" x1="0" y1="0" x2="1" y2=".6"><stop offset="0" stop-color="#fff3d6" stop-opacity=".75"/><stop offset="1" stop-color="#fff3d6" stop-opacity="0"/></linearGradient>
-  <radialGradient id="gPool"><stop offset="0" stop-color="#ffd9a0" stop-opacity=".95"/><stop offset=".4" stop-color="#ffc77a" stop-opacity=".45"/><stop offset="1" stop-color="#ffc77a" stop-opacity="0"/></radialGradient>
-  <radialGradient id="gCrt"><stop offset="0" stop-color="#9dffc0" stop-opacity=".7"/><stop offset="1" stop-color="#9dffc0" stop-opacity="0"/></radialGradient>
-  <radialGradient id="gMoon"><stop offset="0" stop-color="#b9c8ff" stop-opacity=".5"/><stop offset="1" stop-color="#b9c8ff" stop-opacity="0"/></radialGradient>
+  <radialGradient id="gPool"><stop offset="0" stop-color="#ffd85a" stop-opacity=".95"/><stop offset=".4" stop-color="#ffc700" stop-opacity=".42"/><stop offset="1" stop-color="#ffc700" stop-opacity="0"/></radialGradient>
+  <radialGradient id="gCrt"><stop offset="0" stop-color="#9a8cff" stop-opacity=".7"/><stop offset="1" stop-color="#9a8cff" stop-opacity="0"/></radialGradient>
+  <radialGradient id="gMoon"><stop offset="0" stop-color="#9a8cff" stop-opacity=".5"/><stop offset="1" stop-color="#9a8cff" stop-opacity="0"/></radialGradient>
+  <filter id="neonGlow" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b1"/><feGaussianBlur in="SourceGraphic" stdDeviation="14" result="b2"/><feMerge><feMergeNode in="b2"/><feMergeNode in="b1"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   <filter id="sh1" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4"/></filter>
   <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="10"/></filter>
   <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 .35 0 0 0 0 .27 0 0 0 0 .2 0 0 0 .07 0"/></filter>
@@ -180,7 +181,13 @@ function calendarArt(){const x=318,y=170,w=176,h=156,k=.985,F=fromVP([x,y],k),G=
   <circle cx="${(F[0]+G[0])/2}" cy="${F[1]-3}" r="3" fill="#7a6a4f"/>`}
 
 // Đồng hồ treo tường chạy theo giờ thật.
-const CLK={x:566,y:226,r:34};
+// Biển neon logo tròn treo giữa lịch tập và kệ sách: tấm đế tối gắn tường (luôn thấy), ống neon vàng phát sáng trên lớp tối.
+const NEON={x:567,y:236,r:64};
+function neonArt(){const{x,y,r}=NEON,s=r*2;
+ EM.push(`<g class="emneon" filter="url(#neonGlow)">${logoSvg({bg:'none',line:'#ffd84d',mark:'#fff4cc',x:x-r,y:y-r,size:s,cls:'neon'})}</g>`);
+ return `<circle cx="${x+6}" cy="${y+8}" r="${r+6}" fill="#3a2a1c" opacity=".22" filter="url(#sh1)"/><circle cx="${x}" cy="${y}" r="${r+5}" fill="#231b52"/>
+ <circle cx="${x}" cy="${y}" r="${r+5}" fill="none" stroke="#fff" stroke-opacity=".12" stroke-width="1.2"/>${[[-1,-1],[1,-1],[-1,1],[1,1]].map(([a,b])=>`<circle cx="${(x+a*r*.78).toFixed(1)}" cy="${(y+b*r*.78).toFixed(1)}" r="1.8" fill="#8f86b8"/>`).join('')}`}
+const CLK={x:1160,y:119,r:24};
 function clockArt(){const{x:cx,y:cy,r}=CLK;return `<circle cx="${cx+8}" cy="${cy+7}" r="${r}" fill="#3a2a1c" opacity=".16" filter="url(#sh1)"/><circle cx="${cx}" cy="${cy}" r="${r+4}" fill="#c9a77c"/><circle cx="${cx}" cy="${cy}" r="${r+4}" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width="1"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="#fbf8f2"/>
  ${Array.from({length:12},(_,i)=>{const a=i*Math.PI/6,l=i%3?4:8;return `<line x1="${(cx+Math.sin(a)*(r-4)).toFixed(1)}" y1="${(cy-Math.cos(a)*(r-4)).toFixed(1)}" x2="${(cx+Math.sin(a)*(r-4-l)).toFixed(1)}" y2="${(cy-Math.cos(a)*(r-4-l)).toFixed(1)}" stroke="#3b2d20" stroke-width="${i%3?1:2}"/>`}).join('')}
  <line id="hh" x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy-17}" stroke="#2a2522" stroke-width="3" stroke-linecap="round"/><line id="mm" x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy-26}" stroke="#2a2522" stroke-width="2" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="2.6" fill="#c0503b"/>
@@ -236,16 +243,18 @@ const OBJS=[
  {id:'lich-tap',name:'Lịch luyện tập',open:true,art:calendarArt,sub:()=>{if(!HB.loaded)return 'Mở lịch tập';const s=dayStat(dayKey()),a=allStreak();return `${a.cur?`🔥 ${a.cur} ngày · `:''}hôm nay ${s.n?`${s.done}/${s.n}`:'nghỉ'}`}},
  {id:'tu-do',name:'Tủ đồ sưu tầm',open:true,art:wardrobeArt,sub:()=>garments.length?`${garments.length} món`:'Mở tủ đồ'}];
 
-function drawRoom(){const sc=$('scene');if(!sc)return;EM=[];
+function drawRoom(){const sc=$('scene');if(!sc)return;
+ if(r3Active()){r3Refresh();return}   // đang hiện phòng 3D: chỉ cập nhật sách, áo, tờ lịch
+ sc.classList.remove('s3d');EM=[];
  const o=id=>OBJS.find(x=>x.id===id),g=x=>`<g class="obj${x.open?'':' soon'}" data-go="${x.id}" tabindex="0" role="button" aria-label="${x.name}: ${x.sub()}">${x.art()}</g>`;
  sc.innerHTML=`<svg class="rbg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
-  <g class="pl-b">${shell()}${sunlight()}${clockArt()}${switchArt()}</g>
+  <g class="pl-b">${shell()}${sunlight()}${neonArt()}${clockArt()}${switchArt()}</g>
   <g class="pl-m">${g(o('lich-tap'))}${g(o('tu-do'))}${rugArt()}${g(o('ke-sach'))}${g(o('ban'))}${lampArt()}</g>
   <g class="pl-f">${plantArt()}</g>
   <g pointer-events="none"><rect width="1600" height="900" class="dark"/><rect width="1600" height="900" class="dusk"/>
    <g style="mix-blend-mode:screen"><ellipse class="lampg2" cx="200" cy="640" rx="420" ry="380"/><ellipse class="lampg2" cx="800" cy="120" rx="560" ry="260" style="opacity:calc(var(--glow)*.3)"/><ellipse class="crtg" cx="430" cy="455" rx="130" ry="90"/><ellipse class="moong" cx="150" cy="380" rx="160" ry="260"/>
     <ellipse class="ledg2" cx="800" cy="420" rx="200" ry="300"/><ellipse class="spotg" cx="1160" cy="380" rx="170" ry="280"/></g>
-   <defs><linearGradient id="gCone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2b0" stop-opacity=".55"/><stop offset="1" stop-color="#ffe2b0" stop-opacity="0"/></linearGradient></defs>
+   <defs><linearGradient id="gCone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe48a" stop-opacity=".55"/><stop offset="1" stop-color="#ffe48a" stop-opacity="0"/></linearGradient></defs>
    <g class="em">${EM.join('')}</g></g>
  </svg><div class="otag" id="otag"></div><button type="button" class="lightsw" id="lsw" aria-label="Bật / tắt đèn phòng" title="Bật / tắt đèn phòng"></button>`;
  tickClock()}
@@ -275,6 +284,7 @@ document.addEventListener('click',e=>{if(e.target.closest('#lsw')){const off=doc
 document.addEventListener('keydown',e=>{const b=e.target.closest&&e.target.closest('#scene .obj');if(b&&(e.key==='Enter'||e.key===' ')){e.preventDefault();activate(b)}});
 if(store.get('ksk3lights')==='0')document.body.classList.add('lights-off');
 
-room('phong',{title:ROOM_NAME,enter(from){$('rname').textContent=ROOM_NAME;drawRoom();scrollTo({top:0,behavior:'instant'});
- if(from)zoomFrom(from);if(!books.length)loadBooks().then(()=>{if(curRoom==='phong')drawRoom()});loadGarments();loadHabits()}});
+room('phong',{title:ROOM_NAME,enter(from){$('rname').textContent=ROOM_NAME;const in3d=r3Enter(from);if(!in3d)drawRoom();scrollTo({top:0,behavior:'instant'});
+ if(from&&!in3d)zoomFrom(from);if(!books.length)loadBooks().then(()=>{if(curRoom==='phong')drawRoom()});loadGarments();loadHabits()},
+ leave(){r3Leave()}});
 hooks.books.push(()=>{if(curRoom==='phong')drawRoom()});
